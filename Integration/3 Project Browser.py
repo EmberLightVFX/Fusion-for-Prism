@@ -38,6 +38,10 @@ prismRoot = os.getenv("PRISM_ROOT")
 if not prismRoot:
     prismRoot = PRISMROOT
 
+# Fix for imageio to work
+sys.path.insert(0, sys.path.append(os.path.join(prismRoot, "PythonLibs/CrossPlatform")))
+import imageio
+
 sys.path.append(os.path.join(prismRoot, "Scripts"))
 sys.path.append(os.path.join(prismRoot, "PythonLibs", "Python37", "PySide"))
 
