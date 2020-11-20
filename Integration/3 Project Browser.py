@@ -39,7 +39,7 @@ if not prismRoot:
     prismRoot = PRISMROOT
 
 # Fix for imageio to work
-sys.path.insert(0, sys.path.append(os.path.join(prismRoot, "PythonLibs/CrossPlatform")))
+sys.path.insert(0, os.path.join(prismRoot, "PythonLibs/CrossPlatform"))
 import imageio
 
 sys.path.append(os.path.join(prismRoot, "Scripts"))
