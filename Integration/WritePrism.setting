@@ -181,8 +181,8 @@
 					LINKID_DataType = "Number",
 					INPID_InputControl = "ButtonControl",
 					BTNCS_Execute = [=[
-tool = comp.ActiveTool
-comp:RunScript("Scripts:Prism/refresh writer.py", tool)]=],
+						tool = comp.ActiveTool
+						comp:RunScript("Scripts:Prism/refresh writer.py", tool)]=],
 					INP_Integer = false,
 					ICD_Width = 0.5,
 					ICS_ControlPage = "File"
@@ -193,11 +193,52 @@ comp:RunScript("Scripts:Prism/refresh writer.py", tool)]=],
 					LINKID_DataType = "Number",
 					INPID_InputControl = "ButtonControl",
 					BTNCS_Execute = [=[
-tool = comp.ActiveTool
-comp:RunScript("Scripts:Prism/open in explorer.py", tool)]=],
+						tool = comp.ActiveTool
+						comp:RunScript("Scripts:Prism/open in explorer.py", tool)]=],
 					INP_Integer = false,
 					ICD_Width = 0.5,
 					ICS_ControlPage = "File"
+				},
+				SOLO = {
+					ICD_Width = 0.5,
+					INP_Default = 0,
+					ICS_ControlPage = "File",
+					BTNCS_Execute = [=[
+						function check_selected(tool)
+						    return tool:GetAttrs('TOOLB_Selected')
+						end
+
+						function check_enabled(tool)
+						    return tool:GetAttrs('TOOLB_PassThrough')
+						end
+
+						local cmp = fu:GetCurrentComp()
+						local selectedSavers = cmp:GetToolList(true, \"Saver\")
+						local allSavers = cmp:GetToolList(false, \"Saver\")
+						for _, currentSaver in pairs(allSavers) do
+						    if not check_selected(currentSaver) then
+						        currentSaver:SetAttrs( { TOOLB_PassThrough = true } )
+						    end
+						end
+						for _, sel in pairs(selectedSavers) do
+						    if check_enabled(sel) then
+						        sel:SetAttrs({ TOOLB_PassThrough = false})
+						    end
+						end ]=],
+					INPID_InputControl = "ButtonControl",
+					LINKID_DataType = "Number",
+					LINKS_Name = "Solo"
+				},
+				ML = {
+					ICD_Width = 0.5,
+					INP_Default = 0,
+					ICS_ControlPage = "File",
+					BTNCS_Execute = [=[
+						tool = comp.ActiveTool
+						comp:RunScript("Scripts:Comp/Saver Tools/LoaderFromSaver.lua", tool) ]=],
+					INPID_InputControl = "ButtonControl",
+					LINKID_DataType = "Number",
+					LINKS_Name = "Make Loader"
 				},
 			}
 		}
