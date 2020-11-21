@@ -50,9 +50,6 @@
                     ]])
                     rets = self:Default(ctx, args)
                     ]=]
-
-
-
             },
         },
         Action = "Comp_Opened",
