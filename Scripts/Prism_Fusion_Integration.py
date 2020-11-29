@@ -141,7 +141,8 @@ class Prism_Fusion_Integration(object):
 
                 with open(targetFile, "w") as init:
                     initStr = initStr.replace(
-                        "PRISMROOT", '"%s"' % self.core.prismRoot.replace("\\", "/")
+                        "PRISMROOT", '"%s"' % self.core.prismRoot.replace(
+                            "\\", "/")
                     )
                     init.write(initStr)
 
@@ -154,6 +155,7 @@ class Prism_Fusion_Integration(object):
                 "open in explorer.py",
                 "refresh writer.py",
                 "sceneOpen.py",
+                "LoaderFromSaver.lua",
             ]:
                 origFile = os.path.join(integrationBase, i)
                 targetFile = os.path.join(installPath, "Scripts", "Prism", i)
@@ -230,7 +232,8 @@ class Prism_Fusion_Integration(object):
             pFiles.append(
                 os.path.join(installPath, "Config", "PrismMenu.fu")
             )
-            pFiles.append(os.path.join(installPath, "Scripts", "PrismInit.scriptlib"))
+            pFiles.append(os.path.join(
+                installPath, "Scripts", "PrismInit.scriptlib"))
             pFiles.append(
                 os.path.join(
                     installPath, "Scripts", "Prism", "1 Save Version.py"
@@ -268,6 +271,10 @@ class Prism_Fusion_Integration(object):
             pFiles.append(
                 os.path.join(installPath, "Scripts",
                              "Prism", "sceneOpen.py")
+            )
+            pFiles.append(
+                os.path.join(installPath, "Scripts",
+                             "Prism", "LoaderFromSaver.lua")
             )
             pFiles.append(
                 os.path.join(installPath, "Scripts",

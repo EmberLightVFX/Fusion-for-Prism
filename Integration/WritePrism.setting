@@ -213,8 +213,8 @@
 						end
 
 						local cmp = fu:GetCurrentComp()
-						local selectedSavers = cmp:GetToolList(true, \"Saver\")
-						local allSavers = cmp:GetToolList(false, \"Saver\")
+						local selectedSavers = cmp:GetToolList(true, "Saver")
+						local allSavers = cmp:GetToolList(false, "Saver")
 						for _, currentSaver in pairs(allSavers) do
 						    if not check_selected(currentSaver) then
 						        currentSaver:SetAttrs( { TOOLB_PassThrough = true } )
@@ -235,7 +235,7 @@
 					ICS_ControlPage = "File",
 					BTNCS_Execute = [=[
 						tool = comp.ActiveTool
-						comp:RunScript("Scripts:Comp/Saver Tools/LoaderFromSaver.lua", tool) ]=],
+						comp:RunScript("Scripts:Prism/LoaderFromSaver.lua", tool)]=],
 					INPID_InputControl = "ButtonControl",
 					LINKID_DataType = "Number",
 					LINKS_Name = "Make Loader"
