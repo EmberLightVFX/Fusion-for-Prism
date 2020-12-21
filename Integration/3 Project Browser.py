@@ -34,21 +34,16 @@
 import os
 import sys
 
-# As only the .scriptlib file passes this argument, check if it exists locally
-# If not, that means the script wasn't launched from .scriptlib
-if 'scriptlib' not in locals():
-	scriptlib = False
-
 prismRoot = os.getenv("PRISM_ROOT")
 if not prismRoot:
-    prismRoot = "C:/Prism"
+    prismRoot = PRISMROOT
 
 # Fix for imageio to work
-sys.path.insert(0, os.path.join(prismRoot, "PythonLibs", "CrossPlatform"))
+sys.path.insert(0, os.path.join(prismRoot, "PythonLibs/CrossPlatform"))
 import imageio  # nopep8
 
-sys.path.append(os.path.join(prismRoot, "Scripts"))
-sys.path.append(os.path.join(prismRoot, "PythonLibs", "Python37", "PySide"))
+sys.path.insert(0, os.path.join(prismRoot, "Scripts"))
+sys.path.insert(0, os.path.join(prismRoot, "PythonLibs", "Python37", "PySide"))
 
 try:
     from PySide2.QtCore import *
@@ -68,18 +63,9 @@ pcore = PrismCore.PrismCore(app="Fusion")
 pcore.appPlugin.fusion = fusion
 
 curPrj = pcore.getConfig("globals", "current project")
+if curPrj is not None and curPrj != "":
+    pcore.changeProject(curPrj, openUi="projectBrowser")
+else:
+    pcore.projects.setProject(openUi="projectBrowser")
 
-openprism = pcore.getConfig("fusion", "openprism")
-if openprism is None:
-	openprism = True
-
-def openBrowser(curPrj):
-	if curPrj is not None and curPrj != "":
-	    pcore.changeProject(curPrj, openUi="projectBrowser")
-	else:
-	    pcore.projects.setProject(openUi="projectBrowser")
-
-	qapp.exec_()
-
-if scriptlib is False or (scriptlib is True and openprism is True):
-	openBrowser(curPrj)
+qapp.exec_()
