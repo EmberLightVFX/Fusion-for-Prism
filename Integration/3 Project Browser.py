@@ -42,9 +42,9 @@ if not prismRoot:
 sys.path.insert(0, os.path.join(prismRoot, "PythonLibs/CrossPlatform"))
 import imageio  # nopep8
 
-sys.path.insert(0, os.path.join(prismRoot, "Scripts"))
-sys.path.insert(0, os.path.join(prismRoot, "PythonLibs", "Python27", "PySide"))
-sys.path.insert(0, os.path.join(prismRoot, "PythonLibs", "Python37", "PySide"))
+sys.path.append(os.path.join(prismRoot, "Scripts"))
+sys.path.append(os.path.join(prismRoot, "PythonLibs", "Python27", "PySide"))
+sys.path.append(os.path.join(prismRoot, "PythonLibs", "Python37", "PySide"))
 
 try:
     from PySide2.QtCore import *
