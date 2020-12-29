@@ -3,9 +3,10 @@ import sys
 
 prismRoot = os.getenv("PRISM_ROOT")
 if not prismRoot:
-    prismRoot = "C:/Prism"
+    prismRoot = PRISMROOT
 	
 sys.path.insert(0, os.path.join(prismRoot, "Scripts"))
+sys.path.insert(0, os.path.join(prismRoot, "PythonLibs", "Python27", "PySide"))
 sys.path.insert(0, os.path.join(prismRoot, "PythonLibs", "Python37", "PySide"))
 
 try:
