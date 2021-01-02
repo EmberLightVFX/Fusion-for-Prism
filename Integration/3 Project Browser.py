@@ -63,10 +63,18 @@ import PrismCore  # nopep8
 pcore = PrismCore.PrismCore(app="Fusion")
 pcore.appPlugin.fusion = fusion
 
-curPrj = pcore.getConfig("globals", "current project")
-if curPrj is not None and curPrj != "":
-    pcore.changeProject(curPrj, openUi="projectBrowser")
-else:
-    pcore.projects.setProject(openUi="projectBrowser")
+doOpen = True
+try:
+	if scriptlib is True and pcore.getConfig("fusion", "openprism") is False:
+		doOpen = False
+except:
+	pass
 
-qapp.exec_()
+if doOpen:
+	curPrj = pcore.getConfig("globals", "current project")
+	if curPrj is not None and curPrj != "":
+	    pcore.changeProject(curPrj, openUi="projectBrowser")
+	else:
+	    pcore.projects.setProject(openUi="projectBrowser")
+
+	qapp.exec_()
