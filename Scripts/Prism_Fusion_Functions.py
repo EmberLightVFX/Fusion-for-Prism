@@ -379,6 +379,16 @@ class Prism_Fusion_Functions(object):
     def getOutputPath(self, node, render=False):
         self.isRendering = [False, ""]
 
+        if node is None:
+            msg = QMessageBox(
+                QMessageBox.Warning, "Prism Warning", "Please select one or more write nodes you wish to refresh"
+            )
+            self.core.parentWindow(msg)
+            if self.core.useOnTop:
+                msg.setWindowFlags(msg.windowFlags() ^ Qt.WindowStaysOnTopHint)
+            msg.exec_()
+            return ""
+
         taskName = node.GetInput("PrismTaskControl")
         origComment = node.GetInput("PrismCommentControl")
         if origComment is None:
