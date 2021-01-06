@@ -187,18 +187,6 @@
 					ICD_Width = 0.5,
 					ICS_ControlPage = "File"
 				},
-
-				OpenDirButton = {
-					LINKS_Name = "Open in explorer",
-					LINKID_DataType = "Number",
-					INPID_InputControl = "ButtonControl",
-					BTNCS_Execute = [=[
-						tool = comp.ActiveTool
-						comp:RunScript("Scripts:Prism/open in explorer.py", tool)]=],
-					INP_Integer = false,
-					ICD_Width = 0.5,
-					ICS_ControlPage = "File"
-				},
 				SOLO = {
 					ICD_Width = 0.5,
 					INP_Default = 0,
@@ -228,6 +216,17 @@
 					INPID_InputControl = "ButtonControl",
 					LINKID_DataType = "Number",
 					LINKS_Name = "Solo"
+				},
+				OpenDirButton = {
+					LINKS_Name = "Open in explorer",
+					LINKID_DataType = "Number",
+					INPID_InputControl = "ButtonControl",
+					BTNCS_Execute = [=[
+						tool = comp.ActiveTool
+						comp:RunScript("Scripts:Prism/open in explorer.py", tool)]=],
+					INP_Integer = false,
+					ICD_Width = 0.5,
+					ICS_ControlPage = "File"
 				},
 				ML = {
 					ICD_Width = 0.5,
