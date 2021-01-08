@@ -36,36 +36,38 @@ import sys
 
 prismRoot = os.getenv("PRISM_ROOT")
 if not prismRoot:
-    prismRoot = PRISMROOT
-	
+    prismRoot = "C:/Prism"
+    
 sys.path.append(os.path.join(prismRoot, "Scripts"))
 sys.path.append(os.path.join(prismRoot, "PythonLibs", "Python27", "PySide"))
 sys.path.append(os.path.join(prismRoot, "PythonLibs", "Python37", "PySide"))
 
 try:
-	from PySide2.QtCore import *
-	from PySide2.QtGui import *
-	from PySide2.QtWidgets import *
+    from PySide2.QtCore import *
+    from PySide2.QtGui import *
+    from PySide2.QtWidgets import *
 except:
-	from PySide.QtCore import *
-	from PySide.QtGui import *
+    from PySide.QtCore import *
+    from PySide.QtGui import *
 
 qapp = QApplication.instance()
-
 if qapp == None:
 	qapp = QApplication(sys.argv)
 
+
 import PrismCore
 
-pcore = PrismCore.PrismCore(app="Fusion")
+pcore = PrismCore.PrismCore(app='Fusion', prismArgs=["parentWindows"])
 pcore.appPlugin.fusion = fusion
 
-curPrj = pcore.getConfig("globals", "current project")
+curPrj = pcore.getConfig('globals', 'current project')
 if curPrj is not None and curPrj != "":
-	pcore.changeProject(curPrj, openUi="") # projectBrowser
+    pcore.changeProject(curPrj)
+    comp = fusion.GetCurrentComp()
+    wpNodes = comp.GetToolList(False, "Saver")
+    for i in wpNodes:
+        if not hasattr(wpNodes[i], "PrismTaskControl") or wpNodes[i].PrismTaskControl is None:
+            continue
+        pcore.appPlugin.startRender(wpNodes[i])
 else:
-	pcore.projects.setProject(openUi="projectBrowser")
-
-pcore.sceneOpen()
-
-qapp.exec_()
+    QMessageBox.warning(pcore.messageParent, "Prism warning", "No project is active.\nPlease set a project in the Prism Settings or by opening the Project Browser.")
