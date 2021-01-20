@@ -51,7 +51,7 @@ class Prism_Fusion_Functions(object):
 
     @err_catcher(name=__name__)
     def instantStartup(self, origin):
-        # 	qapp = QApplication.instance()
+        #   qapp = QApplication.instance()
 
         with (
             open(
@@ -92,8 +92,8 @@ class Prism_Fusion_Functions(object):
         # ssheet = ssheet.replace("white", "rgb(200, 200, 200)")
         if "parentWindows" in origin.prismArgs:
             origin.messageParent.setStyleSheet(ssheet)
-            # 	origin.messageParent.resize(10,10)
-            # 	origin.messageParent.show()
+            #   origin.messageParent.resize(10,10)
+            #   origin.messageParent.show()
             origin.parentWindows = True
         else:
             qapp = QApplication.instance()
@@ -222,27 +222,34 @@ class Prism_Fusion_Functions(object):
         updatedNodes = []
 
         selNodes = self.fusion.GetCurrentComp().GetToolList(True, "Loader")
-        for k in selNodes:
-            i = selNodes[k]
-            curPath = i.GetAttrs()["TOOLST_Clip_Name"][1]
+        if len(selNodes) == 0:
+            selNodes = self.fusion.GetCurrentComp().GetToolList(False, "Loader")
 
-            newPath = self.core.getLatestCompositingVersion(curPath)
+        if len(selNodes):
+            comp = self.fusion.GetCurrentComp()
+            comp.StartUndo("Updating loaders")
+            for k in selNodes:
+                i = selNodes[k]
+                curPath = comp.MapPath(i.GetAttrs()["TOOLST_Clip_Name"][1])
 
-            if os.path.exists(os.path.dirname(newPath)) and not curPath.startswith(
-                os.path.dirname(newPath)
-            ):
-                firstFrame = i.GetInput("GlobalIn")
-                lastFrame = i.GetInput("GlobalOut")
+                newPath = self.core.getLatestCompositingVersion(curPath)
 
-                i.Clip = newPath
+                if os.path.exists(os.path.dirname(newPath)) and not curPath.startswith(
+                    os.path.dirname(newPath)
+                ):
+                    firstFrame = i.GetInput("GlobalIn")
+                    lastFrame = i.GetInput("GlobalOut")
 
-                i.GlobalOut = lastFrame
-                i.GlobalIn = firstFrame
-                i.ClipTimeStart = 0
-                i.ClipTimeEnd = lastFrame - firstFrame
-                i.HoldLastFrame = 0
+                    i.Clip = newPath
 
-                updatedNodes.append(i)
+                    i.GlobalOut = lastFrame
+                    i.GlobalIn = firstFrame
+                    i.ClipTimeStart = 0
+                    i.ClipTimeEnd = lastFrame - firstFrame
+                    i.HoldLastFrame = 0
+
+                    updatedNodes.append(i)
+            comp.EndUndo(True)
 
         if len(updatedNodes) == 0:
             QMessageBox.information(
@@ -296,7 +303,7 @@ class Prism_Fusion_Functions(object):
         )
         msg.addButton("Current pass", QMessageBox.YesRole)
         msg.addButton("All passes", QMessageBox.YesRole)
-        # 	msg.addButton("Layout all passes", QMessageBox.YesRole)
+        #   msg.addButton("Layout all passes", QMessageBox.YesRole)
         self.core.parentWindow(msg)
         action = msg.exec_()
 
