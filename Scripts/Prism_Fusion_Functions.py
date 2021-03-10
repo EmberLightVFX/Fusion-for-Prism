@@ -495,7 +495,8 @@ class Prism_Fusion_Functions(object):
             # EXR fallback format
             fileType = "exr"
 
-        localOut = node.GetInput("SaveLocalControl")
+        location = node.GetInput("Location")
+        print(location)
         useLastVersion = node.GetInput("RenderLastVersionControl")
 
         if taskName is None or taskName == "":
@@ -522,7 +523,7 @@ class Prism_Fusion_Functions(object):
             fileType,
             useLastVersion,
             render,
-            localOut,
+            location,
             comment,
             ignoreEmpty=True,
         ).replace("####", "")
@@ -545,3 +546,44 @@ class Prism_Fusion_Functions(object):
             return
 
         self.core.saveScene(versionUp=False)
+
+    @err_catcher(name=__name__)
+    def updateNodeUI(self, nodeType, node):
+        if nodeType == "writePrism":
+            locations = self.core.paths.getRenderProductBasePaths()
+            locNames = list(locations.keys())
+
+            # As copySettings and loadSettings doesn't work with python we'll have to execute them as Lua code
+            luacode = ' \
+            local tool = comp.ActiveTool  \
+            local ctrls = tool.UserControls  \
+            local settings = comp:CopySettings(tool)  \
+  \
+            comp:Lock()  \
+  \
+            ctrls.Location = {'
+
+            for location in locNames:
+                luacode = luacode + \
+                    '{CCS_AddString = "' + str(location) + '"},\n \
+                     {CCID_AddID = "' + str(location) + '"},\n'
+
+            luacode = luacode + ' \
+            ICD_Width = 0.7,  \
+            INP_Integer = false,  \
+            INP_External = false,  \
+            LINKID_DataType = "FuID",  \
+            ICS_ControlPage = "File",  \
+            CC_LabelPosition = "Horizontal",  \
+            INPID_InputControl = "ComboIDControl",  \
+            LINKS_Name = "Location",  \
+        }  \
+ \
+            tool.UserControls = ctrls \
+            tool:LoadSettings(settings) \
+            refresh = tool:Refresh() \
+            comp:Unlock() \
+            '
+
+            comp = self.fusion.GetCurrentComp()
+            comp.Execute(luacode)

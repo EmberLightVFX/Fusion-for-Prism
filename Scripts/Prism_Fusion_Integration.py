@@ -153,6 +153,7 @@ class Prism_Fusion_Integration(object):
                 "4 Update selected load nodes.py",
                 "5 Settings.py",
                 "open in explorer.py",
+                "refresh location.py"
                 "refresh writer.py",
                 "sceneOpen.py",
                 "LoaderFromSaver.lua",
@@ -264,6 +265,10 @@ class Prism_Fusion_Integration(object):
                 os.path.join(installPath, "Scripts",
                              "Prism", "open in explorer.py")
             )
+            pFiles.append(
+                os.path.join(installPath, "Scripts",
+                             "Prism", "refresh location.py")
+
             pFiles.append(
                 os.path.join(installPath, "Scripts",
                              "Prism", "refresh writer.py")
