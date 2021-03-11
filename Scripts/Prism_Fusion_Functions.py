@@ -496,7 +496,6 @@ class Prism_Fusion_Functions(object):
             fileType = "exr"
 
         location = node.GetInput("Location")
-        print(location)
         useLastVersion = node.GetInput("RenderLastVersionControl")
 
         if taskName is None or taskName == "":
