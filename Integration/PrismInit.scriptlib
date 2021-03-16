@@ -1,14 +1,17 @@
-if fusion:GetData("PrismStarted") ~= true then
-	fusion:SetData("PrismStarted", true)
-	if fusion:GetAttrs("FUSIONB_IsRenderNode") == false then
-		local scriptPath = app:MapPath("Scripts:Prism/3 Project Browser.py")
-		if bmd.fileexists(scriptPath) == false then
-		    print("[Prism Error] Can't run file: " .. scriptPath)
-		else
-			fusion:RunScript(scriptPath, {scriptlib=true})
+if composition == nil then
+	if fusion:GetData("PrismStarted") ~= true then
+		fusion:SetData("PrismStarted", true)
+		if fusion:GetAttrs("FUSIONB_IsRenderNode") == false then
+			local scriptPath = app:MapPath("Scripts:Prism/3 Project Browser.py")
+			if bmd.fileexists(scriptPath) == false then
+			    print("[Prism Error] Can't run file: " .. scriptPath)
+			else
+				fusion:RunScript(scriptPath, {scriptlib=true})
+			end
 		end
 	end
-end
 
-wait(5)
-fusion:SetData("PrismStarted", false)
+	wait(5)
+
+	fusion:SetData("PrismStarted", false)
+end
