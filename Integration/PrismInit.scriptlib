@@ -1,5 +1,5 @@
-if composition == nil then
-	fusion = bmd.scriptapp("Fusion")
+if fusion:GetData("PrismStarted") ~= true then
+	fusion:SetData("PrismStarted", true)
 	if fusion:GetAttrs("FUSIONB_IsRenderNode") == false then
 		local scriptPath = app:MapPath("Scripts:Prism/3 Project Browser.py")
 		if bmd.fileexists(scriptPath) == false then
@@ -9,3 +9,6 @@ if composition == nil then
 		end
 	end
 end
+
+wait(5)
+fusion:SetData("PrismStarted", false)
