@@ -30,13 +30,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Prism.  If not, see <https://www.gnu.org/licenses/>.
 
+import os
 
 class Prism_Fusion_Variables(object):
     def __init__(self, core, plugin):
-        self.version = "v1.3.0.0"
+        self.version = "v2.0.2-beta"
         self.pluginName = "Fusion"
         self.pluginType = "App"
-        self.appShortName = "Fusion"
+        self.appShortName = "Fuse"
         self.appType = "2d"
         self.hasQtParent = False
         self.sceneFormats = [".comp"]
@@ -44,3 +45,9 @@ class Prism_Fusion_Variables(object):
         self.appColor = [134, 96, 166]
         self.appVersionPresets = ["16"]
         self.platforms = ["Windows", "Linux", "Darwin"]
+        self.pluginDirectory = os.path.abspath(
+            os.path.dirname(os.path.dirname(__file__))
+            )
+        self.appIcon = os.path.join(
+            self.pluginDirectory, "UserInterfaces", "Fusion.ico"
+            )

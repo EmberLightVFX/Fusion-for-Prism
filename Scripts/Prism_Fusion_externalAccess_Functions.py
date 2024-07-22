@@ -32,13 +32,9 @@
 
 import os
 
-try:
-    from PySide2.QtCore import *
-    from PySide2.QtGui import *
-    from PySide2.QtWidgets import *
-except:
-    from PySide.QtCore import *
-    from PySide.QtGui import *
+from qtpy.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
 
 from PrismUtils.Decorators import err_catcher_plugin as err_catcher
 
@@ -48,28 +44,51 @@ class Prism_Fusion_externalAccess_Functions(object):
         self.core = core
         self.plugin = plugin
 
-    @err_catcher(name=__name__)
-    def prismSettings_loadUI(self, origin, tab):
-        origin.chb_openPrism = QCheckBox("Open Prism UI on startup")
-        tab.layout().addWidget(origin.chb_openPrism)
+        self.core.registerCallback(
+            "userSettings_saveSettings",
+            self.userSettings_saveSettings,
+            plugin=self.plugin,
+            )
+        self.core.registerCallback(
+            "userSettings_loadSettings",
+            self.userSettings_loadSettings,
+            plugin=self.plugin,
+            )
+        self.core.registerCallback("getPresetScenes", self.getPresetScenes, plugin=self.plugin)
+
+        ssheetPath = os.path.join(
+            self.pluginDirectory,
+            "UserInterfaces",
+            "FusionStyleSheet"
+            )
+        
+        self.core.registerStyleSheet(ssheetPath)
+
 
     @err_catcher(name=__name__)
-    def prismSettings_saveSettings(self, origin, settings):
+    def userSettings_loadUI(self, origin, tab):
+        origin.chb_fusionOpenPrism = QCheckBox("Open Project Browser on startup")
+        tab.layout().addWidget(origin.chb_fusionOpenPrism)
+
+
+    @err_catcher(name=__name__)
+    def userSettings_saveSettings(self, origin, settings):
         if "fusion" not in settings:
             settings["fusion"] = {}
 
-        settings["fusion"]["openprism"] = origin.chb_openPrism.isChecked()
+        settings["fusion"]["openprism"] = origin.chb_fusionOpenPrism.isChecked()
+
 
     @err_catcher(name=__name__)
-    def prismSettings_loadSettings(self, origin, settings):
+    def userSettings_loadSettings(self, origin, settings):
         if "fusion" in settings:
             if "openprism" in settings["fusion"]:
-                origin.chb_openPrism.setChecked(
-                    settings["fusion"]["openprism"])
+                origin.chb_fusionOpenPrism.setChecked(settings["fusion"]["openprism"])
         else:
-            origin.chb_openPrism.setChecked(True)
+            origin.chb_fusionOpenPrism.setChecked(True)
             settings["fusion"] = {}
-            settings["fusion"]["openprism"] = origin.chb_openPrism.isChecked()
+            settings["fusion"]["openprism"] = origin.chb_fusionOpenPrism.isChecked()
+
 
     @err_catcher(name=__name__)
     def getAutobackPath(self, origin, tab):
@@ -82,3 +101,11 @@ class Prism_Fusion_externalAccess_Functions(object):
         fileStr += ")"
 
         return autobackpath, fileStr
+    
+
+    @err_catcher(name=__name__)
+    def getPresetScenes(self, presetScenes):
+        presetDir = os.path.join(self.pluginDirectory, "Presets")
+        scenes = self.core.entities.getPresetScenesFromFolder(presetDir)
+        presetScenes += scenes
+

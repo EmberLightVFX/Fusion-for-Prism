@@ -35,13 +35,9 @@ import sys
 import platform
 import shutil
 
-try:
-    from PySide2.QtCore import *
-    from PySide2.QtGui import *
-    from PySide2.QtWidgets import *
-except:
-    from PySide.QtCore import *
-    from PySide.QtGui import *
+from qtpy.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
 
 from PrismUtils.Decorators import err_catcher_plugin as err_catcher
 
@@ -149,8 +145,8 @@ class Prism_Fusion_Integration(object):
             for i in [
                 "1 Save Version.py",
                 "2 Save Comment.py",
-                "3 Project Browser.py",
-                "4 Update selected load nodes.py",
+                "3 Update selected load nodes.py",
+                "4 Project Browser.py",
                 "5 Settings.py",
                 "open in explorer.py",
                 "refresh location.py",
@@ -247,15 +243,15 @@ class Prism_Fusion_Integration(object):
             )
             pFiles.append(
                 os.path.join(
-                    installPath, "Scripts", "Prism", "3 Project Browser.py"
+                    installPath,
+                    "Scripts",
+                    "Prism",
+                    "3 Update selected load nodes.py",
                 )
             )
             pFiles.append(
                 os.path.join(
-                    installPath,
-                    "Scripts",
-                    "Prism",
-                    "4 Update selected load nodes.py",
+                    installPath, "Scripts", "Prism", "4 Project Browser.py"
                 )
             )
             pFiles.append(

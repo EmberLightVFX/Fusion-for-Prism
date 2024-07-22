@@ -40,7 +40,7 @@ class Prism_Fusion_unloaded(
     Prism_Fusion_Variables,
     Prism_Fusion_externalAccess_Functions,
     Prism_Fusion_Integration,
-):
+    ):
     def __init__(self, core):
         Prism_Fusion_Variables.__init__(self, core, self)
         Prism_Fusion_externalAccess_Functions.__init__(self, core, self)

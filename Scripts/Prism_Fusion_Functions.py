@@ -33,13 +33,9 @@
 
 import os
 
-try:
-    from PySide2.QtCore import *
-    from PySide2.QtGui import *
-    from PySide2.QtWidgets import *
-except:
-    from PySide.QtCore import *
-    from PySide.QtGui import *
+from qtpy.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
 
 from PrismUtils.Decorators import err_catcher as err_catcher
 
@@ -48,39 +44,26 @@ class Prism_Fusion_Functions(object):
     def __init__(self, core, plugin):
         self.core = core
         self.plugin = plugin
+        self.prismRoot = os.path.normpath(self.core.prismRoot)
 
     @err_catcher(name=__name__)
     def instantStartup(self, origin):
-        #   qapp = QApplication.instance()
+        qapp = QApplication.instance()
 
-        with (
-            open(
-                os.path.join(
-                    self.core.prismRoot,
-                    "Plugins",
-                    "Apps",
-                    "Fusion",
-                    "UserInterfaces",
-                    "FusionStyleSheet",
-                    "Fusion.qss",
-                ),
-                "r",
-            )
-        ) as ssFile:
+        with (open(os.path.join(self.pluginDirectory,
+                                "UserInterfaces",
+                                "FusionStyleSheet",
+                                "Fusion.qss"),
+                                "r",)) as ssFile:
             ssheet = ssFile.read()
 
-        ssheet = ssheet.replace(
-            "qss:",
-            os.path.join(
-                self.core.prismRoot,
-                "Plugins",
-                "Apps",
-                "Fusion",
-                "UserInterfaces",
-                "FusionStyleSheet",
-            ).replace("\\", "/")
-            + "/",
-        )
+        ssheet = ssheet.replace("qss:", os.path.join(self.pluginDirectory,
+                                                     "UserInterfaces",
+                                                     "FusionStyleSheet",
+                                                     ).replace("\\", "/") + "/")
+
+        self.core.setActiveStyleSheet("Fusion")
+        
         # ssheet = ssheet.replace("#c8c8c8", "rgb(47, 48, 54)").replace("#727272", "rgb(40, 40, 46)").replace("#5e90fa", "rgb(70, 85, 132)").replace("#505050", "rgb(33, 33, 38)")
         # ssheet = ssheet.replace("#a6a6a6", "rgb(37, 39, 42)").replace("#8a8a8a", "rgb(37, 39, 42)").replace("#b5b5b5", "rgb(47, 49, 52)").replace("#999999", "rgb(47, 49, 52)")
         # ssheet = ssheet.replace("#9f9f9f", "rgb(31, 31, 31)").replace("#b2b2b2", "rgb(31, 31, 31)").replace("#aeaeae", "rgb(35, 35, 35)").replace("#c1c1c1", "rgb(35, 35, 35)")
@@ -91,7 +74,7 @@ class Prism_Fusion_Functions(object):
         # ssheet = ssheet.replace("#7f7f7f", "rgb(60, 60, 66)").replace("#6c6c6c", "rgb(60, 60, 66)").replace("#565656", "rgb(35, 35, 41)").replace("#5d5d5d", "rgb(35, 35, 41)")
         # ssheet = ssheet.replace("white", "rgb(200, 200, 200)")
         if "parentWindows" in origin.prismArgs:
-            origin.messageParent.setStyleSheet(ssheet)
+            # origin.messageParent.setStyleSheet(ssheet)
             #   origin.messageParent.resize(10,10)
             #   origin.messageParent.show()
             origin.parentWindows = True
@@ -100,9 +83,9 @@ class Prism_Fusion_Functions(object):
             qapp.setStyleSheet(ssheet)
             appIcon = QIcon(
                 os.path.join(
-                    self.core.prismRoot, "Scripts", "UserInterfacesPrism", "p_tray.png"
+                    self.prismRoot, "Scripts", "UserInterfacesPrism", "p_tray.png"
+                    )
                 )
-            )
             qapp.setWindowIcon(appIcon)
 
         self.isRendering = [False, ""]
@@ -232,7 +215,12 @@ class Prism_Fusion_Functions(object):
                 i = selNodes[k]
                 curPath = comp.MapPath(i.GetAttrs()["TOOLST_Clip_Name"][1])
 
-                newPath = self.core.getLatestCompositingVersion(curPath)
+                self.core.popup(f"curPath:  {curPath}")                                      #    TESTING
+
+                # newPath = self.core.getLatestCompositingVersion(curPath)
+                newPath = self.core.getHighestVersion(curPath)
+
+                self.core.popup(f"newPath: {newPath}")                                      #    TESTING
 
                 if os.path.exists(os.path.dirname(newPath)) and not curPath.startswith(
                     os.path.dirname(newPath)
