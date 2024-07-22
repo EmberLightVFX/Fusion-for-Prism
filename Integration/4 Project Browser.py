@@ -34,11 +34,21 @@
 import os
 import sys
 
-prismRoot = os.getenv("PRISM_ROOT")
-if not prismRoot:
+if "PRISM_ROOT" in os.environ:
+    prismRoot = os.environ["PRISM_ROOT"]
+    if not prismRoot:
+        raise Exception("PRISM_ROOT is not set")
+else:
     prismRoot = PRISMROOT
 
+# Fix for imageio to work
+sys.path.insert(0, os.path.join(prismRoot, "PythonLibs", "Python3"))
+sys.path.insert(0, os.path.join(prismRoot, "PythonLibs", "Python311"))
+import imageio  # nopep8
+
 sys.path.append(os.path.join(prismRoot, "Scripts"))
+sys.path.insert(0, os.path.join(prismRoot, "Scripts"))
+import PrismCore
 
 from qtpy.QtCore import *
 from qtpy.QtGui import *
@@ -49,18 +59,22 @@ if qapp == None:
     qapp = QApplication(sys.argv)
 
 
-import PrismCore
 
 pcore = PrismCore.PrismCore(app="Fusion")
 pcore.appPlugin.fusion = fusion
 
-curPrj = pcore.getConfig("globals", "current project")
-if curPrj is not None and curPrj != "":
-    pcore.changeProject(curPrj)
-    pcore.saveScene()
-else:
-    QMessageBox.warning(
-        pcore.messageParent,
-        "Prism warning",
-        "No project is active.\nPlease set a project in the Prism Settings or by opening the Project Browser.",
-        )
+doOpen = True
+try:
+	if scriptlib is True and pcore.getConfig("fusion", "openprism") is False:
+		doOpen = False
+except:
+	pass
+
+if doOpen:
+	curPrj = pcore.getConfig("globals", "current project")
+	if curPrj is not None and curPrj != "":
+		pcore.changeProject(curPrj, openUi="projectBrowser")
+	else:
+		pcore.projects.setProject(openUi="projectBrowser")
+
+	qapp.exec_()

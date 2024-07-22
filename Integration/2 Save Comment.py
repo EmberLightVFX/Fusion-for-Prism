@@ -39,16 +39,10 @@ if not prismRoot:
     prismRoot = PRISMROOT
 
 sys.path.append(os.path.join(prismRoot, "Scripts"))
-sys.path.append(os.path.join(prismRoot, "PythonLibs", "Python27", "PySide"))
-sys.path.append(os.path.join(prismRoot, "PythonLibs", "Python37", "PySide"))
 
-try:
-    from PySide2.QtCore import *
-    from PySide2.QtGui import *
-    from PySide2.QtWidgets import *
-except:
-    from PySide.QtCore import *
-    from PySide.QtGui import *
+from qtpy.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
 
 qapp = QApplication.instance()
 if qapp == None:
@@ -70,4 +64,4 @@ else:
         pcore.messageParent,
         "Prism warning",
         "No project is active.\nPlease set a project in the Prism Settings or by opening the Project Browser.",
-    )
+        )

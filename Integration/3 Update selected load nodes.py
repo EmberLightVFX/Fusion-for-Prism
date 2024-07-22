@@ -40,6 +40,7 @@ if not prismRoot:
 
 sys.path.append(os.path.join(prismRoot, "Scripts"))
 
+
 from qtpy.QtCore import *
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
@@ -57,7 +58,7 @@ pcore.appPlugin.fusion = fusion
 curPrj = pcore.getConfig("globals", "current project")
 if curPrj is not None and curPrj != "":
     pcore.changeProject(curPrj)
-    pcore.saveScene()
+    pcore.appPlugin.updateReadNodes()
 else:
     QMessageBox.warning(
         pcore.messageParent,

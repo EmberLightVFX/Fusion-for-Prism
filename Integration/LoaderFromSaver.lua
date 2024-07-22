@@ -1,5 +1,5 @@
 -- Description: 
---         Create a Loaver from selected Saver node. Works with multiple selected selectedSavers.
+--         Create a Loader from selected Saver node. Works with multiple selected selectedSavers.
 -- License: MIT
 -- Author: Alex Bogomolov
 -- email: mail@abogomolov.com
