@@ -585,6 +585,7 @@ QTabBar::tab:!selected {
 
 QLabel, QGroupBox {
     color: rgb(200, 200, 200);
+    background-color: transparent;
 }
 
 QTabBar::tab:top:!selected:hover,
@@ -1011,7 +1012,6 @@ QSplitter::handle:horizontal {
     width: 2px;
     margin: 0px;
     padding: 0px;
-    background-image: url(qss:images_fusion/vertical_line.png);
     background-position: center center;
     background-repeat: repeat-y;
 }
@@ -1020,7 +1020,6 @@ QSplitter::handle:vertical {
     height: 2px;
     margin: 0px;
     padding: 0px;
-    background-image: url(qss:images_fusion/horizontal_line.png);
     background-position: center center;
     background-repeat: repeat-x;
 }
@@ -1035,7 +1034,7 @@ QMainWindow::separator:horizontal {
     width: 2px;
     margin: 0px;
     padding: 0px;
-    background-image: url(qss:images_fusion/horizontal_line.png);
+    background-image: url(qss:images/horizontal_line.png);
     background-position: center center;
     background-repeat: repeat-x;
 }
@@ -1044,7 +1043,7 @@ QMainWindow::separator:vertical {
     height: 2px;
     margin: 0px;
     padding: 0px;
-    background-image: url(qss:images_fusion/vertical_line.png);
+    background-image: url(qss:images/vertical_line.png);
     background-position: center center;
     background-repeat: repeat-y;
 }
@@ -1195,8 +1194,9 @@ QDateTimeEdit {
     color: rgb(200, 200, 200);
     background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb(31, 31, 31), stop:1 rgb(31, 31, 31));
     selection-color: rgb(200, 200, 200);
-    selection-background-color: rgb(35, 35, 35);
-    border-radius: 4px;
+    selection-background-color: rgb(120, 120, 120);
+    border-radius: 2px;
+    border: 1px solid rgb(20, 20, 20);
     min-width: 50px; /* it ensures the default value is correctly displayed */
     min-height: 20px; /* important to be a pair number in order to up/down buttons to be divisible by two (if not set could create a blank line in Ubuntu. Its downside is that it's needed to reset it (min-width: 0px) on following elements that can't have it such as fields inside QToolBar and inside QTreeView (Property editor) */
     padding: 1px 2px; /* temporal: could don't be compatible with elements inside Tree/List view */
@@ -1331,7 +1331,7 @@ QDoubleSpinBox::up-arrow,
 QTimeEdit::up-arrow,
 QDateEdit::up-arrow,
 QDateTimeEdit::up-arrow {
-    image: url(qss:images/up_arrow_dark.png);
+    image: url(qss:images/up_arrow_light.png);
     top: 2px; /* fix symmetry between up and down images */
 }
 
@@ -1341,7 +1341,7 @@ QDoubleSpinBox::up-arrow:focus,
 QTimeEdit::up-arrow:focus,
 QDateEdit::up-arrow:focus,
 QDateTimeEdit::up-arrow:focus {
-    image: url(qss:images/up_arrow_dark.png);
+    image: url(qss:images/up_arrow_light.png);
 }
 
 QAbstractSpinBox::up-arrow:focus:hover,
@@ -1350,7 +1350,7 @@ QDoubleSpinBox::up-arrow:focus:hover,
 QTimeEdit::up-arrow:focus:hover,
 QDateEdit::up-arrow:focus:hover,
 QDateTimeEdit::up-arrow:focus:hover {
-    image: url(qss:images/up_arrow_darker.png);
+    image: url(qss:images/up_arrow_lighter.png);
 }
 
 QAbstractSpinBox::up-arrow:off,
@@ -1359,7 +1359,7 @@ QDoubleSpinBox::up-arrow:off,
 QTimeEdit::up-arrow:off,
 QDateEdit::up-arrow:off,
 QDateTimeEdit::up-arrow:off {
-    image: url(qss:images/up_arrow_disabled_dark.png);
+    image: url(qss:images/up_arrow_disabled_light.png);
 }
 
 QAbstractSpinBox::up-arrow:disabled,
@@ -1368,7 +1368,7 @@ QDoubleSpinBox::up-arrow:disabled,
 QTimeEdit::up-arrow:disabled,
 QDateEdit::up-arrow:disabled,
 QDateTimeEdit::up-arrow:disabled {
-    image: url(qss:images/up_arrow_disabled_dark.png);
+    image: url(qss:images/up_arrow_disabled_light.png);
 }
 
 QAbstractSpinBox::down-arrow,
@@ -1377,7 +1377,7 @@ QDoubleSpinBox::down-arrow,
 QTimeEdit::down-arrow,
 QDateEdit::down-arrow,
 QDateTimeEdit::down-arrow {
-    image: url(qss:images/down_arrow_dark.png);
+    image: url(qss:images/down_arrow_light.png);
     bottom: 0px; /* fix simetry between up and down images */
 }
 
@@ -1387,7 +1387,7 @@ QDoubleSpinBox::down-arrow:focus,
 QTimeEdit::down-arrow:focus,
 QDateEdit::down-arrow:focus,
 QDateTimeEdit::down-arrow:focus {
-    image: url(qss:images/down_arrow_dark.png);
+    image: url(qss:images/down_arrow_light.png);
 }
 
 QAbstractSpinBox::down-arrow:focus:hover,
@@ -1396,7 +1396,7 @@ QDoubleSpinBox::down-arrow:focus,
 QTimeEdit::down-arrow:focus:hover,
 QDateEdit::down-arrow:focus:hover,
 QDateTimeEdit::down-arrow:focus:hover {
-    image: url(qss:images/down_arrow_darker.png);
+    image: url(qss:images/down_arrow_lighter.png);
 }
 
 QAbstractSpinBox::down-arrow:off,
@@ -1405,7 +1405,7 @@ QDoubleSpinBox::down-arrow:off,
 QTimeEdit::down-arrow:off,
 QDateEdit::down-arrow:off,
 QDateTimeEdit::down-arrow:off {
-    image: url(qss:images/down_arrow_disabled_dark.png);
+    image: url(qss:images/down_arrow_disabled_light.png);
 }
 
 QAbstractSpinBox::down-arrow:disabled,
@@ -1414,7 +1414,7 @@ QDoubleSpinBox::down-arrow:disabled,
 QTimeEdit::down-arrow:disabled,
 QDateEdit::down-arrow:disabled,
 QDateTimeEdit::down-arrow:disabled {
-    image: url(qss:images/down_arrow_disabled_dark.png);
+    image: url(qss:images/down_arrow_disabled_light.png);
 }
 
 /* ComboBox */
@@ -1423,8 +1423,8 @@ QComboBox {
     background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb(35, 35, 41), stop:1 rgb(35, 35, 41));
     selection-color: rgb(200, 200, 200);
     selection-background-color: #3874f2;
-    border: 1px solid #2f2f2f;
-    border-radius: 4px;
+    border: 1px solid rgb(20, 20, 20);
+    border-radius: 2px;
     min-width: 50px; /* it ensures the default value is correctly displayed */
     min-height: 20px; /* important to be a pair number in order to up/down buttons to be divisible by two (if not set could create a blank line in Ubuntu. Its downside is that it's needed to reset it (min-width: 0px) on following elements that can't have it such as fields inside QToolBar and inside QTreeView (Property editor) */
     padding: 1px 2px; /* temporal: could don't be compatible with elements inside Tree/List view */
@@ -1497,7 +1497,7 @@ QPushButton {
     color: rgb(200, 200, 200);
     text-align: center;
     background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb(37, 39, 42), stop:1 rgb(37, 39, 42));
-    border: 1px solid rgb(200, 200, 200);
+    border: 1px solid rgb(80, 80, 80);
     padding: 4px 4px;
     margin: 4px 4px;
     min-height: 16px; /* same as QTabBar QPushButton min-width */
@@ -1594,11 +1594,10 @@ Tool button inside QDialogs that works as QPushButtons
 ==================================================================================================*/
 /* found under Tools -> Customize -> Macros -> Pixmap "..." button */
 QDialog QToolButton {
-    color: black;
+    color: rgb(160, 160, 160);
     text-align: center;
-    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb(37, 39, 42), stop:1 rgb(37, 39, 42));
-    border: 1px solid #2f2f2f;
-    border-bottom-color: black; /* simulates shadow under the button */
+    background-color: rgb(37, 39, 42);
+    border: 0px solid #2f2f2f;
     padding: 0px; /* different than regular QPushButton */
     margin: 2px; /* different than regular QPushButton */
     min-height: 16px; /* same as QTabBar QPushButton min-width */
@@ -1607,7 +1606,7 @@ QDialog QToolButton {
 
 QDialog QToolButton:hover,
 QDialog QToolButton:focus {
-    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb(47, 49, 52), stop:1 rgb(47, 49, 52));
+    background-color: rgb(77, 79, 82);
 }
 
 QDialog QToolButton:disabled,
@@ -1619,7 +1618,12 @@ QDialog QToolButton:disabled:checked {
 
 QDialog QToolButton:pressed {
     color: rgb(200, 200, 200);
-    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb(27, 29, 32), stop:1 rgb(27, 29, 32));
+    background-color: rgb(27, 29, 32);
+}
+
+QToolButton:checked {
+    color: rgb(200, 200, 200);
+    background-color: rgba(250, 250, 250, 80);
 }
 
 
@@ -1685,7 +1689,7 @@ QRadioButton:disabled {
 }
 
 QRadioButton {
-    color: black;
+    color: rgb(200, 200, 200);
 }
 
 QRadioButton:disabled {
@@ -1725,7 +1729,7 @@ QCheckBox:disabled {
 
 QCheckBox::indicator {
     color: black;
-    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb(35, 35, 41), stop:1 rgb(35, 35, 41));
+    background-color: rgb(25, 25, 31);
     border: 1px solid #292929;
     width: 11px;
     height: 11px;
@@ -1733,7 +1737,7 @@ QCheckBox::indicator {
 }
 
 QCheckBox::indicator:hover {
-    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb(45, 45, 51), stop:1 rgb(45, 45, 51));
+    background-color: rgb(32, 32, 35);
 }
 
 QCheckBox::indicator:pressed,
@@ -2280,3 +2284,7 @@ QDialog QGroupBox QFrame {
 }
 
 *[mandatoryField="true"] { background-color: cyan }
+
+QToolButton {
+    color: rgb(200, 200, 200);
+}
