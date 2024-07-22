@@ -37,20 +37,20 @@ import sys
 prismRoot = os.getenv("PRISM_ROOT")
 if not prismRoot:
     prismRoot = PRISMROOT
-	
-sys.path.append(os.path.join(prismRoot, "Scripts"))
 
+sys.path.insert(0, os.path.join(prismRoot, "PythonLibs", "Python3"))
+sys.path.insert(0, os.path.join(prismRoot, "PythonLibs", "Python311"))
+sys.path.insert(0, os.path.join(prismRoot, "Scripts"))
+
+import PrismCore
 
 from qtpy.QtCore import *
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 
 qapp = QApplication.instance()
-
 if qapp == None:
-	qapp = QApplication(sys.argv)
-
-import PrismCore
+    qapp = QApplication(sys.argv)
 
 pcore = PrismCore.PrismCore(app="Fusion")
 pcore.appPlugin.fusion = fusion

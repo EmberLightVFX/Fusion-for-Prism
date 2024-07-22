@@ -32,6 +32,7 @@
 
 
 import os
+import tempfile
 
 from qtpy.QtCore import *
 from qtpy.QtGui import *
@@ -142,6 +143,76 @@ class Prism_Fusion_Functions(object):
             return self.fusion.GetCurrentComp().Save(filepath)
         except:
             return ""
+        
+
+
+
+
+    # @err_catcher(name=__name__)
+    # def captureViewportThumbnail(self):
+
+    #     # path = tempfile.NamedTemporaryFile(suffix=".jpg").name
+
+    #     path = r"C:\\Users\\Alta Arts\\Desktop\\THUMBS\\TESTTHUMB.png"
+
+    #     self.core.popup(f"self.fusion from thumb:  {self.fusion}")                                      #    TESTING
+
+
+    #     comp = self.fusion.GetCurrentComp()
+    #     flow = comp.CurrentFrame.FlowView
+    #     # viewer = self.fusion.CurrentViewer()
+    #     # image = viewer.GetCurrentImage()
+
+    #     # Get the right viewer
+    #     right_viewer = fusion.GetViewers().get("RightView", None)
+    #     if right_viewer is None:
+    #         print("Right viewer not found.")
+    #         return
+        
+
+    #     selectedTool = comp.GetToolList(False).get("Selected", None)
+    #     self.core.popup(f"selectedTool:  {selectedTool}")                                      #    TESTING
+
+    #     lastTool = self.getLastTool(comp)
+    #     self.core.popup(f"lastTool: {lastTool}")                                      #    TESTING
+
+    #     tempSaver = comp.AddTool("WritePrism")
+
+    #     if lastTool:
+    #         tempSaver.ConnectInput(1, lastTool)
+
+    #     tempSaver.SetData("File", path)
+    #     tempSaver.SetData("Format", "PNG")
+
+    #     comp.QueueAction("Render")
+
+        # # Wait for render completion
+        # import time
+        # time.sleep(5)  # Adjust time as needed for rendering
+
+        # # Remove the temporary Saver tool
+        # current_comp.DeleteTool(tempSaver)
+
+
+        # if image:
+        #     image.Save(path)
+
+        # pm = self.core.media.getPixmapFromPath(path)
+
+        # return pm
+
+    @err_catcher(name=__name__)
+    def getLastTool(self, comp):
+
+        toolList = comp.GetToolList()
+        lastTool = None
+        for tool in toolList.values():
+            if not tool.GetInputList():
+                lastTool = tool
+
+        return lastTool
+
+
 
     @err_catcher(name=__name__)
     def getImportPaths(self, origin):
@@ -487,13 +558,16 @@ class Prism_Fusion_Functions(object):
         useLastVersion = node.GetInput("RenderLastVersionControl")
 
         if taskName is None or taskName == "":
-            msg = QMessageBox(
-                QMessageBox.Warning, "Prism Warning", "Please choose a taskname"
-            )
-            self.core.parentWindow(msg)
-            if self.core.useOnTop:
-                msg.setWindowFlags(msg.windowFlags() ^ Qt.WindowStaysOnTopHint)
-            msg.exec_()
+            # msg = QMessageBox(
+            #     QMessageBox.Warning, "Prism Warning", "Please choose a taskname"
+            # )
+            # self.core.parentWindow(msg)
+            # if self.core.useOnTop:
+            #     msg.setWindowFlags(msg.windowFlags() ^ Qt.WindowStaysOnTopHint)
+            # msg.exec_()
+
+            self.core.popup("Please choose a taskname", title="Taskname")
+
             return ""
 
         if useLastVersion:
@@ -519,6 +593,7 @@ class Prism_Fusion_Functions(object):
         node.FilePathControl = outputName
 
         return outputName
+    
 
     @err_catcher(name=__name__)
     def startRender(self, node):
@@ -539,6 +614,9 @@ class Prism_Fusion_Functions(object):
         if nodeType == "writePrism":
             locations = self.core.paths.getRenderProductBasePaths()
             locNames = list(locations.keys())
+
+            self.core.popup("Locations updated")
+
 
             # As copySettings and loadSettings doesn't work with python we'll have to execute them as Lua code
             luacode = ' \
