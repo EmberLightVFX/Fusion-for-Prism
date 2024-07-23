@@ -116,9 +116,10 @@
 					INP_External = false,
 				},
 
-				PrismTaskControl = {
+				PrismMediaIDControl = {
 					TEC_ReadOnly = false,
-					LINKS_Name = "Task",
+					INP_External = false,
+					LINKS_Name = "MediaID",
 					ICS_ControlPage = "File",
 					LINKID_DataType = "Text",
 					INPID_InputControl = "TextEditControl",
@@ -129,6 +130,7 @@
 				PrismCommentControl = {
 					TEC_ReadOnly = false,
 					LINKS_Name = "Comment (optional)",
+					INP_External = false,
 					ICS_ControlPage = "File",
 					LINKID_DataType = "Text",
 					INPID_InputControl = "TextEditControl",
@@ -161,6 +163,7 @@
 				RenderLastVersionControl = {
 					CBC_TriState = false,
 					INP_Integer = true,
+					INP_External = false,
 					LINKID_DataType = "Number",
 					INP_Default = 0,
 					ICS_ControlPage = "File",

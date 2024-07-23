@@ -60,10 +60,10 @@ curPrj = pcore.getConfig("globals", "current project")
 if curPrj is not None and curPrj != "":
     pcore.changeProject(curPrj)
     pcore.saveWithComment()
-    qapp.exec_()
+
 else:
-    QMessageBox.warning(
-        pcore.messageParent,
-        "Prism warning",
-        "No project is active.\nPlease set a project in the Prism Settings or by opening the Project Browser.",
-        )
+    pcore.popup("No project is active.\n"
+                "Please set a project in the Prism Settings or by opening the Project Browser.",
+                title="Prism warning")
+    
+qapp.exec_()

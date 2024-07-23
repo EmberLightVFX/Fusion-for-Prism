@@ -50,24 +50,47 @@ class Prism_Fusion_Integration(object):
         if platform.system() == "Windows":
             self.examplePath = os.path.join(
                 os.environ["appdata"], "Blackmagic Design", "Fusion"
-            )
+                )
         elif platform.system() == "Linux":
             userName = (
                 os.environ["SUDO_USER"]
                 if "SUDO_USER" in os.environ
                 else os.environ["USER"]
-            )
+                )
             self.examplePath = "/home/%s/.fusion/BlackmagicDesign/Fusion" % userName
         elif platform.system() == "Darwin":
             userName = (
                 os.environ["SUDO_USER"]
                 if "SUDO_USER" in os.environ
                 else os.environ["USER"]
-            )
+                )
             self.examplePath = (
                 "/Users/%s/Library/Application Support/Blackmagic Design/Fusion"
                 % userName
-            )
+                )
+
+            #   Files to be used in Integration
+        self.prismFuPrismDirFiles = ["1 Save Version.py",
+                                    "2 Save Comment.py",
+                                    "3 Update selected load nodes.py",
+                                    "4 Project Browser.py",
+                                    "5 Settings.py",
+                                    "open in explorer.py",
+                                    "refresh location.py",
+                                    "refresh writer.py",
+                                    # "sceneOpen.py",       #   commented out - don't think it does anything and has a memory leak it seems
+                                    "LoaderFromSaver.lua",
+                                    "pre-render check.py",
+                                    "refresh mediaID.py",
+                                    "ReloadLoaders.py"]
+        
+        self.prismFuConfigDirFiles = ["PrismEvents.fu",
+                                    "PrismMenu.fu"]
+        
+        self.prismFuScriptsDirFiles = ["PrismInit.scriptlib"]
+
+        self.prismFuMacroDirFiles = ["WritePrism.setting", "LoaderPrism.setting"]
+    
 
     @err_catcher(name=__name__)
     def getExecutable(self):
@@ -76,6 +99,7 @@ class Prism_Fusion_Integration(object):
             execPath = "C:\\Program Files\\Blackmagic Design\\Fusion 9\\Fusion.exe"
 
         return execPath
+    
 
     def addIntegration(self, installPath):
         try:
@@ -94,7 +118,7 @@ class Prism_Fusion_Integration(object):
             addedFiles = []
 
             # "PrismMenu.fu" add a Prism menu, but leads to freezes
-            for i in ["PrismEvents.fu", "PrismMenu.fu"]:
+            for i in self.prismFuConfigDirFiles:
                 origFile = os.path.join(integrationBase, i)
                 targetFile = os.path.join(installPath, "Config", i)
 
@@ -118,7 +142,7 @@ class Prism_Fusion_Integration(object):
                 with open(targetFile, "w") as init:
                     init.write(initStr)
 
-            for i in ["PrismInit.scriptlib"]:
+            for i in self.prismFuScriptsDirFiles:
                 origFile = os.path.join(integrationBase, i)
                 targetFile = os.path.join(installPath, "Scripts", i)
 
@@ -142,18 +166,8 @@ class Prism_Fusion_Integration(object):
                     )
                     init.write(initStr)
 
-            for i in [
-                "1 Save Version.py",
-                "2 Save Comment.py",
-                "3 Update selected load nodes.py",
-                "4 Project Browser.py",
-                "5 Settings.py",
-                "open in explorer.py",
-                "refresh location.py",
-                "refresh writer.py",
-                "sceneOpen.py",
-                "LoaderFromSaver.lua",
-            ]:
+            for i in self.prismFuPrismDirFiles:
+
                 origFile = os.path.join(integrationBase, i)
                 targetFile = os.path.join(installPath, "Scripts", "Prism", i)
 
@@ -177,7 +191,7 @@ class Prism_Fusion_Integration(object):
                     )
                     init.write(initStr)
 
-            for i in ["WritePrism.setting"]:
+            for i in self.prismFuMacroDirFiles:
                 origFile = os.path.join(integrationBase, i)
                 targetFile = os.path.join(installPath, "Macros", i)
 
@@ -220,71 +234,30 @@ class Prism_Fusion_Integration(object):
                                 "Prism Integration", msgStr)
             return False
 
+
     def removeIntegration(self, installPath):
         try:
-            pFiles = []
-            pFiles.append(
-                os.path.join(installPath, "Config", "PrismEvents.fu")
-            )
-            pFiles.append(
-                os.path.join(installPath, "Config", "PrismMenu.fu")
-            )
-            pFiles.append(os.path.join(
-                installPath, "Scripts", "PrismInit.scriptlib"))
-            pFiles.append(
-                os.path.join(
-                    installPath, "Scripts", "Prism", "1 Save Version.py"
-                )
-            )
-            pFiles.append(
-                os.path.join(
-                    installPath, "Scripts", "Prism", "2 Save Comment.py"
-                )
-            )
-            pFiles.append(
-                os.path.join(
-                    installPath,
-                    "Scripts",
-                    "Prism",
-                    "3 Update selected load nodes.py",
-                )
-            )
-            pFiles.append(
-                os.path.join(
-                    installPath, "Scripts", "Prism", "4 Project Browser.py"
-                )
-            )
-            pFiles.append(
-                os.path.join(installPath, "Scripts", "Prism", "5 Settings.py")
-            )
-            pFiles.append(
-                os.path.join(installPath, "Scripts",
-                             "Prism", "open in explorer.py")
-            )
-            pFiles.append(
-                os.path.join(installPath, "Scripts",
-                             "Prism", "refresh location.py")
-            )
-            pFiles.append(
-                os.path.join(installPath, "Scripts",
-                             "Prism", "refresh writer.py")
-            )
-            pFiles.append(
-                os.path.join(installPath, "Scripts",
-                             "Prism", "sceneOpen.py")
-            )
-            pFiles.append(
-                os.path.join(installPath, "Scripts",
-                             "Prism", "LoaderFromSaver.lua")
-            )
-            pFiles.append(
-                os.path.join(installPath, "Scripts",
-                             "Macros", "WritePrism.setting")
-            )
+            prismFusionScriptDir = os.path.join(installPath, "Scripts", "Prism")
+            if os.path.exists(prismFusionScriptDir):
+                shutil.rmtree(prismFusionScriptDir)
 
-            for i in pFiles:
-                if os.path.exists(i):
-                    os.remove(i)
+            prismFusionConfigDir = os.path.join(installPath, "Config")
+            for file in self.prismFuConfigDirFiles:
+                delFile = os.path.join(prismFusionConfigDir, file)
+                if os.path.exists(delFile):
+                    os.remove(delFile)
+
+            scriptLibDir = os.path.join(installPath, "Scripts")
+            for file in self.prismFuScriptsDirFiles:
+                delFile = os.path.join(scriptLibDir, file)
+                if os.path.exists(delFile):
+                    os.remove(delFile)
+
+            macrosDir = os.path.join(installPath, "Macros")
+            for file in self.prismFuMacroDirFiles:
+                delFile = os.path.join(macrosDir, file)
+                if os.path.exists(delFile):
+                    os.remove(delFile)
 
             return True
 
@@ -300,6 +273,7 @@ class Prism_Fusion_Integration(object):
             QMessageBox.warning(self.core.messageParent,
                                 "Prism Integration", msgStr)
             return False
+        
 
     def updateInstallerUI(self, userFolders, pItem):
         try:

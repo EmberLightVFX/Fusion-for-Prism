@@ -44,23 +44,25 @@ class Prism_Fusion_externalAccess_Functions(object):
         self.core = core
         self.plugin = plugin
 
-        self.core.registerCallback(
-            "userSettings_saveSettings",
-            self.userSettings_saveSettings,
-            plugin=self.plugin,
-            )
-        self.core.registerCallback(
-            "userSettings_loadSettings",
-            self.userSettings_loadSettings,
-            plugin=self.plugin,
-            )
-        self.core.registerCallback("getPresetScenes", self.getPresetScenes, plugin=self.plugin)
+        self.core.registerCallback("userSettings_saveSettings",
+                                   self.userSettings_saveSettings,
+                                   plugin=self.plugin)
 
-        ssheetPath = os.path.join(
-            self.pluginDirectory,
-            "UserInterfaces",
-            "FusionStyleSheet"
-            )
+        self.core.registerCallback("userSettings_loadSettings",
+                                   self.userSettings_loadSettings,
+                                   plugin=self.plugin)
+        
+        self.core.registerCallback("getPresetScenes",
+                                   self.getPresetScenes,
+                                   plugin=self.plugin)
+
+        self.core.registerCallback("getIconPathForFileType",
+                                   self.getIconPathForFileType,
+                                   plugin=self)
+
+        ssheetPath = os.path.join(self.pluginDirectory,
+                                  "UserInterfaces",
+                                  "FusionStyleSheet")
         
         self.core.registerStyleSheet(ssheetPath)
 
@@ -101,6 +103,16 @@ class Prism_Fusion_externalAccess_Functions(object):
         fileStr += ")"
 
         return autobackpath, fileStr
+    
+
+    @err_catcher(name=__name__)
+    def getIconPathForFileType(self, extension):
+
+        if extension == ".autocomp":
+            icon = os.path.join(self.pluginDirectory, "UserInterfaces", "Fusion-Autosave.ico")
+            return icon
+
+        return None
     
 
     @err_catcher(name=__name__)

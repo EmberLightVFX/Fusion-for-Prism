@@ -47,6 +47,11 @@ class Prism_Fusion_Functions(object):
         self.plugin = plugin
         self.prismRoot = os.path.normpath(self.core.prismRoot)
 
+        self.core.registerCallback("getIconPathForFileType",
+                                   self.getIconPathForFileType,
+                                   plugin=self)
+
+
     @err_catcher(name=__name__)
     def instantStartup(self, origin):
         qapp = QApplication.instance()
@@ -65,15 +70,6 @@ class Prism_Fusion_Functions(object):
 
         self.core.setActiveStyleSheet("Fusion")
         
-        # ssheet = ssheet.replace("#c8c8c8", "rgb(47, 48, 54)").replace("#727272", "rgb(40, 40, 46)").replace("#5e90fa", "rgb(70, 85, 132)").replace("#505050", "rgb(33, 33, 38)")
-        # ssheet = ssheet.replace("#a6a6a6", "rgb(37, 39, 42)").replace("#8a8a8a", "rgb(37, 39, 42)").replace("#b5b5b5", "rgb(47, 49, 52)").replace("#999999", "rgb(47, 49, 52)")
-        # ssheet = ssheet.replace("#9f9f9f", "rgb(31, 31, 31)").replace("#b2b2b2", "rgb(31, 31, 31)").replace("#aeaeae", "rgb(35, 35, 35)").replace("#c1c1c1", "rgb(35, 35, 35)")
-        # ssheet = ssheet.replace("#555555", "rgb(27, 29, 32)").replace("#717171", "rgb(27, 29, 32)").replace("#878787", "rgb(37, 39, 42)").replace("#7c7c7c", "rgb(37, 39, 42)")
-        # ssheet = ssheet.replace("#4c4c4c", "rgb(99, 101, 103)").replace("#5b5b5b", "rgb(99, 101, 103)").replace("#7aa3e5", "rgb(65, 76, 112)").replace("#5680c1", "rgb(65, 76, 112)")
-        # ssheet = ssheet.replace("#5a5a5a", "rgb(35, 35, 35)").replace("#535353", "rgb(35, 35, 41)").replace("#373737", "rgb(35, 35, 41)").replace("#858585", "rgb(31, 31, 31)").replace("#979797", "rgb(31, 31, 31)")
-        # ssheet = ssheet.replace("#4771b3", "rgb(70, 85, 132)").replace("#638dcf", "rgb(70, 85, 132)").replace("#626262", "rgb(45, 45, 51)").replace("#464646", "rgb(45, 45, 51)")
-        # ssheet = ssheet.replace("#7f7f7f", "rgb(60, 60, 66)").replace("#6c6c6c", "rgb(60, 60, 66)").replace("#565656", "rgb(35, 35, 41)").replace("#5d5d5d", "rgb(35, 35, 41)")
-        # ssheet = ssheet.replace("white", "rgb(200, 200, 200)")
         if "parentWindows" in origin.prismArgs:
             # origin.messageParent.setStyleSheet(ssheet)
             #   origin.messageParent.resize(10,10)
@@ -92,6 +88,17 @@ class Prism_Fusion_Functions(object):
         self.isRendering = [False, ""]
 
         return False
+    
+
+    @err_catcher(name=__name__)
+    def getIconPathForFileType(self, extension):
+
+        if extension == ".autocomp":
+            icon = os.path.join(self.pluginDirectory, "UserInterfaces", "Fusion-Autosave.ico")
+            return icon
+
+        return None
+
 
     @err_catcher(name=__name__)
     def startup(self, origin):
@@ -101,14 +108,17 @@ class Prism_Fusion_Functions(object):
         origin.timer.stop()
         return True
 
+
     @err_catcher(name=__name__)
     def onProjectChanged(self, origin):
         pass
+
 
     @err_catcher(name=__name__)
     def sceneOpen(self, origin):
         if hasattr(origin, "asThread") and origin.asThread.isRunning():
             origin.startasThread()
+
 
     @err_catcher(name=__name__)
     def executeScript(self, origin, code, preventError=False):
@@ -121,6 +131,7 @@ class Prism_Fusion_Functions(object):
                     "raise type(e), type(e)(e.message + msg), sys.exc_info()[2]")
         else:
             return eval(code)
+        
 
     @err_catcher(name=__name__)
     def getCurrentFileName(self, origin, path=True):
@@ -132,6 +143,7 @@ class Prism_Fusion_Functions(object):
                 "COMPS_FileName"]
 
         return currentFileName
+    
 
     @err_catcher(name=__name__)
     def getSceneExtension(self, origin):
@@ -218,6 +230,7 @@ class Prism_Fusion_Functions(object):
     def getImportPaths(self, origin):
         return False
 
+
     @err_catcher(name=__name__)
     def getFrameRange(self, origin):
         startframe = self.fusion.GetCurrentComp().GetAttrs()[
@@ -225,6 +238,7 @@ class Prism_Fusion_Functions(object):
         endframe = self.fusion.GetCurrentComp().GetAttrs()["COMPN_GlobalEnd"]
 
         return [startframe, endframe]
+    
 
     @err_catcher(name=__name__)
     def setFrameRange(self, origin, startFrame, endFrame):
@@ -246,13 +260,16 @@ class Prism_Fusion_Functions(object):
         )
         comp.Unlock()
 
+
     @err_catcher(name=__name__)
     def getFPS(self, origin):
         return self.fusion.GetCurrentComp().GetPrefs()["Comp"]["FrameFormat"]["Rate"]
+    
 
     @err_catcher(name=__name__)
     def setFPS(self, origin, fps):
         return self.fusion.GetCurrentComp().SetPrefs({"Comp.FrameFormat.Rate": fps})
+    
 
     @err_catcher(name=__name__)
     def getResolution(self):
@@ -261,6 +278,7 @@ class Prism_Fusion_Functions(object):
         height = self.fusion.GetCurrentComp().GetPrefs()[
             "Comp"]["FrameFormat"]["Width"]
         return [width, height]
+    
 
     @err_catcher(name=__name__)
     def setResolution(self, width=None, height=None):
@@ -270,6 +288,7 @@ class Prism_Fusion_Functions(object):
                 "Comp.FrameFormat.Height": height,
             }
         )
+
 
     @err_catcher(name=__name__)
     def updateReadNodes(self):
@@ -321,14 +340,17 @@ class Prism_Fusion_Functions(object):
 
             QMessageBox.information(
                 self.core.messageParent, "Information", mStr)
+            
 
     @err_catcher(name=__name__)
     def getAppVersion(self, origin):
         return self.fusion.Version
+    
 
     @err_catcher(name=__name__)
     def onProjectBrowserStartup(self, origin):
         origin.actionStateManager.setEnabled(False)
+
 
     @err_catcher(name=__name__)
     def openScene(self, origin, filepath, force=False):
@@ -341,18 +363,22 @@ class Prism_Fusion_Functions(object):
             pass
 
         return True
+    
 
     @err_catcher(name=__name__)
     def correctExt(self, origin, lfilepath):
         return lfilepath
+    
 
     @err_catcher(name=__name__)
     def setSaveColor(self, origin, btn):
         btn.setPalette(origin.savedPalette)
 
+
     @err_catcher(name=__name__)
     def clearSaveColor(self, origin, btn):
         btn.setPalette(origin.oldPalette)
+
 
     @err_catcher(name=__name__)
     def importImages(self, origin):
@@ -372,6 +398,7 @@ class Prism_Fusion_Functions(object):
             self.fusionImportPasses(origin)
         else:
             return
+        
 
     @err_catcher(name=__name__)
     def fusionImportSource(self, origin):
@@ -395,6 +422,7 @@ class Prism_Fusion_Functions(object):
             tool.HoldLastFrame = 0
 
         self.fusion.GetCurrentComp().Unlock()
+
 
     @err_catcher(name=__name__)
     def fusionImportPasses(self, origin):
@@ -420,6 +448,7 @@ class Prism_Fusion_Functions(object):
             tool.HoldLastFrame = 0
 
         self.fusion.GetCurrentComp().Unlock()
+
 
     @err_catcher(name=__name__)
     def setProject_loading(self, origin):
@@ -455,7 +484,7 @@ class Prism_Fusion_Functions(object):
             msg.exec_()
             return ""
 
-        taskName = node.GetInput("PrismTaskControl")
+        MediaID = node.GetInput("PrismMediaIDControl")
         origComment = node.GetInput("PrismCommentControl")
         if origComment is None:
             comment = ""
@@ -557,16 +586,9 @@ class Prism_Fusion_Functions(object):
         location = node.GetInput("Location")
         useLastVersion = node.GetInput("RenderLastVersionControl")
 
-        if taskName is None or taskName == "":
-            # msg = QMessageBox(
-            #     QMessageBox.Warning, "Prism Warning", "Please choose a taskname"
-            # )
-            # self.core.parentWindow(msg)
-            # if self.core.useOnTop:
-            #     msg.setWindowFlags(msg.windowFlags() ^ Qt.WindowStaysOnTopHint)
-            # msg.exec_()
+        if MediaID is None or MediaID == "":
 
-            self.core.popup("Please choose a taskname", title="Taskname")
+            self.core.popup("Please choose a Media Identifier.", title="Media Identifier")
 
             return ""
 
@@ -580,7 +602,7 @@ class Prism_Fusion_Functions(object):
             msg.exec_()
 
         outputName = self.core.getCompositingOut(
-            taskName,
+            MediaID,
             fileType,
             useLastVersion,
             render,
@@ -591,6 +613,8 @@ class Prism_Fusion_Functions(object):
 
         node.Clip[self.fusion.TIME_UNDEFINED] = outputName
         node.FilePathControl = outputName
+
+        self.core.popup("Refreshed!")
 
         return outputName
     
@@ -608,6 +632,7 @@ class Prism_Fusion_Functions(object):
             return
 
         self.core.saveScene(versionUp=False)
+        
 
     @err_catcher(name=__name__)
     def updateNodeUI(self, nodeType, node):
@@ -615,7 +640,7 @@ class Prism_Fusion_Functions(object):
             locations = self.core.paths.getRenderProductBasePaths()
             locNames = list(locations.keys())
 
-            self.core.popup("Locations updated")
+            self.core.popup("Locations have been updated")
 
 
             # As copySettings and loadSettings doesn't work with python we'll have to execute them as Lua code

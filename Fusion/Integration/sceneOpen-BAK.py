@@ -30,24 +30,37 @@
 # You should have received a copy of the GNU General Public License
 # along with Prism.  If not, see <https://www.gnu.org/licenses/>.
 
-import os
 
-class Prism_Fusion_Variables(object):
-    def __init__(self, core, plugin):
-        self.version = "v2.0.3-beta"
-        self.pluginName = "Fusion"
-        self.pluginType = "App"
-        self.appShortName = "Fuse"
-        self.appType = "2d"
-        self.hasQtParent = False
-        self.sceneFormats = [".comp"]
-        self.appSpecificFormats = self.sceneFormats
-        self.appColor = [134, 96, 166]
-        self.appVersionPresets = ["16"]
-        self.platforms = ["Windows", "Linux", "Darwin"]
-        self.pluginDirectory = os.path.abspath(
-            os.path.dirname(os.path.dirname(__file__))
-            )
-        self.appIcon = os.path.join(
-            self.pluginDirectory, "UserInterfaces", "Fusion.ico"
-            )
+import os
+import sys
+
+prismRoot = os.getenv("PRISM_ROOT")
+if not prismRoot:
+    prismRoot = PRISMROOT
+
+sys.path.insert(0, os.path.join(prismRoot, "PythonLibs", "Python3"))
+sys.path.insert(0, os.path.join(prismRoot, "PythonLibs", "Python311"))
+sys.path.insert(0, os.path.join(prismRoot, "Scripts"))
+
+import PrismCore
+
+from qtpy.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+
+qapp = QApplication.instance()
+if qapp == None:
+    qapp = QApplication(sys.argv)
+
+pcore = PrismCore.PrismCore(app="Fusion")
+pcore.appPlugin.fusion = fusion
+
+curPrj = pcore.getConfig("globals", "current project")
+if curPrj is not None and curPrj != "":
+	pcore.changeProject(curPrj, openUi="") # projectBrowser
+else:
+	pcore.projects.setProject(openUi="projectBrowser")
+
+pcore.sceneOpen()
+
+qapp.exec_()
