@@ -19,7 +19,11 @@ qapp = QApplication.instance()
 if qapp == None:
     qapp = QApplication(sys.argv)
 
+#	Make PrismObject
 pcore = PrismCore.PrismCore(app="Fusion")
+
+#	Pass Fusion Scripting objects to Fusion plugin
+pcore.appPlugin.bmd = bmd
 pcore.appPlugin.fusion = fusion
 
 curPrj = pcore.getConfig('globals', 'current project')

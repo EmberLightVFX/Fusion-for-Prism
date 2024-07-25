@@ -80,9 +80,11 @@ class Prism_Fusion_Integration(object):
                                     "refresh writer.py",
                                     # "sceneOpen.py",       #   commented out - don't think it does anything and has a memory leak it seems
                                     "LoaderFromSaver.lua",
+                                    "LoaderFromSaverMstr.lua",
                                     "pre-render check.py",
                                     "refresh mediaID.py",
-                                    "ReloadLoaders.py"]
+                                    "ReloadLoaders.py",
+                                    "update master.py"]
         
         self.prismFuConfigDirFiles = ["PrismEvents.fu",
                                     "PrismMenu.fu"]

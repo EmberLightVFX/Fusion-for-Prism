@@ -179,7 +179,6 @@
 						tool = comp.ActiveTool
 						comp:RunScript("Scripts:Prism/refresh writer.py", tool)]=],
 					INP_Integer = false,
-					ICD_Width = 0.5,
 					ICS_ControlPage = "File"
 				},
 
@@ -232,16 +231,146 @@
 					ICS_ControlPage = "File"
 				},
 
-				ML = {
-					ICD_Width = 0.5,
+				RenderButton = {
+					INP_Default = 0,
+					ICS_ControlPage = "File",
+					BTNCS_Execute = [=[
+						-- Save the pass-through status of all savers
+						function savePassThroughStatus()
+							local savers = comp:GetToolList(false, "Saver")
+							local status = {}
+							for _, saver in pairs(savers) do
+								status[saver] = saver:GetAttrs('TOOLB_PassThrough')
+							end
+							return status
+						end
+						
+						-- Restore the pass-through status of all savers
+						function restorePassThroughStatus(status)
+							for saver, passThrough in pairs(status) do
+								saver:SetAttrs({ TOOLB_PassThrough = passThrough })
+							end
+						end
+
+						-- Save current pass-through status
+						local originalStatus = savePassThroughStatus()
+
+						-- Check if the MediaID control has a value
+						local tool = comp.ActiveTool
+						local mediaID = tool:GetInput("PrismMediaIDControl")
+
+						if mediaID == nil or mediaID == "" then
+							comp:Print("Error: MediaID is empty.\n")
+							-- Display a popup message using AskUser
+							comp:AskUser("Not Media Identifier Set", {
+								{ "message", "Text", Default = "Please enter a Media Identifier in the MediaID text box before rendering.", ReadOnly = true }
+							})
+							return
+						end
+						
+						-- Set all savers to pass-through, except the current one
+						function setAllToPassThroughExcept(currentTool)
+							local allSavers = comp:GetToolList(false, "Saver")
+							for _, saver in pairs(allSavers) do
+								if saver ~= currentTool then
+									saver:SetAttrs({ TOOLB_PassThrough = true })
+								end
+							end
+						end
+						
+						-- Render the current tool
+						function renderTool(tool)
+							comp:Render()
+						end
+						
+						-- Reset the pass-through status
+						function resetPassThroughStatus()
+							restorePassThroughStatus(originalStatus)
+						end
+
+						-- Main execution
+						setAllToPassThroughExcept(tool)
+						renderTool(tool)
+						resetPassThroughStatus()
+					]=],
+					INPID_InputControl = "ButtonControl",
+					LINKID_DataType = "Number",
+					LINKS_Name = "Render this Node Now!"
+				},
+
+				MakeLoader = {
 					INP_Default = 0,
 					ICS_ControlPage = "File",
 					BTNCS_Execute = [=[
 						tool = comp.ActiveTool
-						comp:RunScript("Scripts:Prism/LoaderFromSaver.lua", tool)]=],
+
+						-- Check if the MediaID control has a value
+						local mediaID = tool:GetInput("PrismMediaIDControl")
+						if mediaID == nil or mediaID == "" then
+							comp:Print("Error: MediaID is empty.\n")
+							-- Display a popup message using AskUser
+							comp:AskUser("No Media Identifier Set", {
+								{ "message", "Text", Default = "Please enter a Media Identifier in the MediaID text box before creating a loader.", ReadOnly = true }
+							})
+							return
+						end
+
+						-- Run the script to create the loader
+						comp:RunScript("Scripts:Prism/LoaderFromSaver.lua", tool)
+					]=],
 					INPID_InputControl = "ButtonControl",
 					LINKID_DataType = "Number",
 					LINKS_Name = "Make Loader"
+				},
+
+				UpdateMstr = {
+					INP_Default = 0,
+					ICS_ControlPage = "File",
+					BTNCS_Execute = [=[
+						tool = comp.ActiveTool
+
+						-- Check if the MediaID control has a value
+						local mediaID = tool:GetInput("PrismMediaIDControl")
+						if mediaID == nil or mediaID == "" then
+							comp:Print("Error: MediaID is empty.\n")
+							-- Display a popup message using AskUser
+							comp:AskUser("No Media Identifier Set", {
+								{ "message", "Text", Default = "Please enter a Media Identifier in the MediaID text box before updating the master.", ReadOnly = true }
+							})
+							return
+						end
+
+						-- Run the script to update the master
+						comp:RunScript("Scripts:Prism/update master.py", tool)
+					]=],
+					INPID_InputControl = "ButtonControl",
+					LINKID_DataType = "Number",
+					LINKS_Name = "Update Master"
+				},
+
+				MakeMstrLoader = {
+					INP_Default = 0,
+					ICS_ControlPage = "File",
+					BTNCS_Execute = [=[
+						tool = comp.ActiveTool
+
+						-- Check if the MediaID control has a value
+						local mediaID = tool:GetInput("PrismMediaIDControl")
+						if mediaID == nil or mediaID == "" then
+							comp:Print("Error: MediaID is empty.\n")
+							-- Display a popup message using AskUser
+							comp:AskUser("No Media Identifier Set", {
+								{ "message", "Text", Default = "Please enter a Media Identifier in the MediaID text box before creating a loader.", ReadOnly = true }
+							})
+							return
+						end
+
+						-- Run the script to create the loader
+						comp:RunScript("Scripts:Prism/LoaderFromSaverMstr.lua", tool)
+					]=],
+					INPID_InputControl = "ButtonControl",
+					LINKID_DataType = "Number",
+					LINKS_Name = "Make Loader from Master"
 				},
 			}
 		}

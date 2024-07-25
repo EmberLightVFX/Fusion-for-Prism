@@ -34,7 +34,7 @@ import os
 
 class Prism_Fusion_Variables(object):
     def __init__(self, core, plugin):
-        self.version = "v2.0.3-beta"
+        self.version = "v2.0.4-beta"
         self.pluginName = "Fusion"
         self.pluginType = "App"
         self.appShortName = "Fuse"

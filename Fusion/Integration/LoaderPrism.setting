@@ -1,6 +1,6 @@
 {
 	Tools = ordered() {
-		Loader = Loader {
+		LoaderPrism = Loader {
 			Clips = {
 				Clip {
 					ID = "",
