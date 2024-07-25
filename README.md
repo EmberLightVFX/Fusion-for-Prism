@@ -15,7 +15,7 @@ https://prism-pipeline.com/
 
 More docs are ToDo
 
-This is ready for use for versioning in Prism.
+This is ready for use in Prism2.
 
 Things working:
 
@@ -26,13 +26,25 @@ Things working:
 - New from Current in Project Browser
 - Open Settings
 - WritePrism (custom Saver node) works fine
+- WritePrism has more functionality
+  * Render WritePrism from tool
+  * Render as last version working
+  * Refresh and MediaID (was task) working correctly
+  * Make loader works correctly
+  * Update Master version button added
+  * Make Loader from Master added
+  * Popup after refresh to show details
+  * Error cehcking of tool
+* LoaderPrism (custom Loader) working
+  * Add image from ProjectBrowser working
+
 
 Things ToDo (as of now, more to come I am sure):
 
-- Redo WritePrism node to have more functionality
-- Error check render version etc
-- Integrate the LoaderPrism into the menu and ProjectBrowser
-- Fix refresh of Loaders
+- Add separate passes from ProjectBrowser not yet done.
+- Thumbnail capture on save
+- Comments from WritePrism to be added to media comments
+  
 
 More details found on the Project tab above.
 
