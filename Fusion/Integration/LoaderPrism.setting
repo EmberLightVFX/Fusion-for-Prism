@@ -1,0 +1,41 @@
+{
+	Tools = ordered() {
+		Loader = Loader {
+			Clips = {
+				Clip {
+					ID = "",
+					Filename = "",
+					FormatID = "OpenEXRFormat",
+					Length = 0,
+					Multiframe = true,
+					TrimIn = 0,
+					TrimOut = 0,
+					ExtendFirst = 0,
+					ExtendLast = 0,
+					Loop = 1,
+					AspectMode = 0,
+					Depth = 0,
+					TimeCode = 0,
+					GlobalStart = 1,
+					GlobalEnd = 1
+				}
+			},
+			CtrlWZoom = false,
+			Inputs = {
+				["Gamut.SLogVersion"] = Input { Value = FuID { "SLog2" }, },
+				["Clip1.QuickTimeMovies.Advanced"] = Input { Value = 1, },
+			},
+			ViewInfo = OperatorInfo { Pos = { 162.667, -15.6667 } },
+			UserControls = ordered() {
+				ML = {
+					LINKS_Name = "Reload Loader",
+					ICS_ControlPage = "File",
+					BTNCS_Execute = " tool = comp.ActiveTool; comp:RunScript(\"Scripts:Prism/ReloadLoaders.py\", tool) ",
+					LINKID_DataType = "Number",
+					INPID_InputControl = "ButtonControl",
+					INP_Default = 0,
+				}
+			}
+		}
+	}
+}
