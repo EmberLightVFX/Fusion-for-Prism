@@ -84,7 +84,9 @@ class Prism_Fusion_Integration(object):
                                     "Pre-RenderCheck.py",
                                     "RefreshMediaID.py",
                                     "ReloadLoaders.py",
-                                    "UpdateMaster.py"]
+                                    "UpdateMaster.py",
+                                    "AddLoaderPrism.lua",
+                                    "AddWritePrism.lua"]
         
         self.prismFuConfigDirFiles = ["PrismEvents.fu",
                                     "PrismMenu.fu"]
