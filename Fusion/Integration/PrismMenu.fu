@@ -43,27 +43,6 @@
     },
     Action
     {
-        ID = "UpdateLoadNodes",
-        Category = "Prism",
-        Name = "Update Selected Load Nodes",
-
-        Targets =
-        {
-            Composition =
-            {
-                Execute = _Lua [=[
-                    local scriptPath = app:MapPath("Scripts:Prism/UpdateLoadNodes.py")
-                    if bmd.fileexists(scriptPath) == false then
-                        print("[Prism Error] Can't run file: " .. scriptPath)
-                    else
-                        target:RunScript(scriptPath)
-                    end
-                ]=],
-            },
-        },
-    },
-    Action
-    {
         ID = "OpenProjectBrowser",
         Category = "Prism",
         Name = "Project Browser",
@@ -104,6 +83,69 @@
             },
         },
     },
+    Action
+    {
+        ID = "AddLoaderPrism",
+        Category = "Prism",
+        Name = "Add LoaderPrism",
+
+        Targets =
+        {
+            Composition =
+            {
+                Execute = _Lua [=[
+                    local scriptPath = app:MapPath("Scripts:Prism/AddLoaderPrism.lua")
+                    if bmd.fileexists(scriptPath) == false then
+                        print("[Prism Error] Can't run file: " .. scriptPath)
+                    else
+                        target:RunScript(scriptPath)
+                    end
+                ]=],
+            },
+        },
+    },
+    Action
+    {
+        ID = "AddWritePrism",
+        Category = "Prism",
+        Name = "Add WritePrism",
+
+        Targets =
+        {
+            Composition =
+            {
+                Execute = _Lua [=[
+                    local scriptPath = app:MapPath("Scripts:Prism/AddWritePrism.lua")
+                    if bmd.fileexists(scriptPath) == false then
+                        print("[Prism Error] Can't run file: " .. scriptPath)
+                    else
+                        target:RunScript(scriptPath)
+                    end
+                ]=],
+            },
+        },
+    },
+    Action
+    {
+        ID = "UpdateLoadNodes",
+        Category = "Prism",
+        Name = "Update Selected Load Nodes",
+
+        Targets =
+        {
+            Composition =
+            {
+                Execute = _Lua [=[
+                    local scriptPath = app:MapPath("Scripts:Prism/UpdateLoadNodes.py")
+                    if bmd.fileexists(scriptPath) == false then
+                        print("[Prism Error] Can't run file: " .. scriptPath)
+                    else
+                        target:RunScript(scriptPath)
+                    end
+                ]=],
+            },
+        },
+    },
     Menus
     {
         Target = "ChildFrame",
@@ -115,10 +157,13 @@
                 "SaveVersion{}",
                 "SaveComment{}",
                 "_",
-                "UpdateLoadNodes{}",
-                "_",
                 "OpenProjectBrowser{}",
                 "OpenSettings{}",
+                "_",
+                "AddLoaderPrism{}",
+                "AddWritePrism{}",
+                "_",
+                "UpdateLoadNodes{}",
             },
         },
     },
