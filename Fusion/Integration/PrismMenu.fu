@@ -1,16 +1,16 @@
 {
     Action
     {
-        ID = "1_Save_Version",
+        ID = "SaveVersion",
         Category = "Prism",
-        Name = "1 Save Version",
+        Name = "Save Version",
 
         Targets =
         {
             Composition =
             {
                 Execute = _Lua [=[
-                    local scriptPath = app:MapPath("Scripts:Prism/1 Save Version.py")
+                    local scriptPath = app:MapPath("Scripts:Prism/SaveVersion.py")
                     if bmd.fileexists(scriptPath) == false then
                         print("[Prism Error] Can't run file: " .. scriptPath)
                     else
@@ -22,16 +22,16 @@
     },
     Action
     {
-        ID = "2_Save_Comment",
+        ID = "SaveComment",
         Category = "Prism",
-        Name = "2 Save Comment",
+        Name = "Save Comment",
 
         Targets =
         {
             Composition =
             {
                 Execute = _Lua [=[
-                    local scriptPath = app:MapPath("Scripts:Prism/2 Save Comment.py")
+                    local scriptPath = app:MapPath("Scripts:Prism/SaveComment.py")
                     if bmd.fileexists(scriptPath) == false then
                         print("[Prism Error] Can't run file: " .. scriptPath)
                     else
@@ -43,16 +43,16 @@
     },
     Action
     {
-        ID = "3_Update_selected_load_nodes",
+        ID = "UpdateLoadNodes",
         Category = "Prism",
-        Name = "3 Update selected load nodes",
+        Name = "Update Selected Load Nodes",
 
         Targets =
         {
             Composition =
             {
                 Execute = _Lua [=[
-                    local scriptPath = app:MapPath("Scripts:Prism/3 Update selected load nodes.py")
+                    local scriptPath = app:MapPath("Scripts:Prism/UpdateLoadNodes.py")
                     if bmd.fileexists(scriptPath) == false then
                         print("[Prism Error] Can't run file: " .. scriptPath)
                     else
@@ -64,16 +64,16 @@
     },
     Action
     {
-        ID = "4_Project_Browser",
+        ID = "OpenProjectBrowser",
         Category = "Prism",
-        Name = "4 Project Browser",
+        Name = "Project Browser",
 
         Targets =
         {
             Composition =
             {
                 Execute = _Lua [=[
-                    local scriptPath = app:MapPath("Scripts:Prism/4 Project Browser.py")
+                    local scriptPath = app:MapPath("Scripts:Prism/OpenProjectBrowser.py")
                     if bmd.fileexists(scriptPath) == false then
                         print("[Prism Error] Can't run file: " .. scriptPath)
                     else
@@ -85,16 +85,16 @@
     },
     Action
     {
-        ID = "5_Settings",
+        ID = "OpenSettings",
         Category = "Prism",
-        Name = "5 Settings",
+        Name = "Settings",
 
         Targets =
         {
             Composition =
             {
                 Execute = _Lua [=[
-                    local scriptPath = app:MapPath("Scripts:Prism/5 Settings.py")
+                    local scriptPath = app:MapPath("Scripts:Prism/OpenSettings.py")
                     if bmd.fileexists(scriptPath) == false then
                         print("[Prism Error] Can't run file: " .. scriptPath)
                     else
@@ -112,13 +112,13 @@
         {
             Sub "Prism"
             {
-                "1_Save_Version{}",
-                "2_Save_Comment{}",
+                "SaveVersion{}",
+                "SaveComment{}",
                 "_",
-                "3_Update_selected_load_nodes{}",
+                "UpdateLoadNodes{}",
                 "_",
-                "4_Project_Browser{}",
-                "5_Settings{}",
+                "OpenProjectBrowser{}",
+                "OpenSettings{}",
             },
         },
     },

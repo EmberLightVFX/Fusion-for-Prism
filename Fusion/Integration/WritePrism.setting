@@ -154,7 +154,7 @@
 					ICD_Width = 0.3,
 					INP_External = false,
 					LINKID_DataType = "Number",
-					BTNCS_Execute = "comp:RunScript(\"Scripts:Prism/refresh location.py\")",
+					BTNCS_Execute = "comp:RunScript(\"Scripts:Prism/RefreshLocation.py\")",
 					ICS_ControlPage = "File",
 					INPID_InputControl = "ButtonControl",
 					LINKS_Name = "Update",
@@ -177,7 +177,7 @@
 					INPID_InputControl = "ButtonControl",
 					BTNCS_Execute = [=[
 						tool = comp.ActiveTool
-						comp:RunScript("Scripts:Prism/refresh writer.py", tool)]=],
+						comp:RunScript("Scripts:Prism/RefreshWriter.py", tool)]=],
 					INP_Integer = false,
 					ICS_ControlPage = "File"
 				},
@@ -225,7 +225,7 @@
 					INPID_InputControl = "ButtonControl",
 					BTNCS_Execute = [=[
 						tool = comp.ActiveTool
-						comp:RunScript("Scripts:Prism/open in explorer.py", tool)]=],
+						comp:RunScript("Scripts:Prism/OpenInExplorer.py", tool)]=],
 					INP_Integer = false,
 					ICD_Width = 0.5,
 					ICS_ControlPage = "File"
@@ -341,7 +341,7 @@
 						end
 
 						-- Run the script to update the master
-						comp:RunScript("Scripts:Prism/update master.py", tool)
+						comp:RunScript("Scripts:Prism/UpdateMaster.py", tool)
 					]=],
 					INPID_InputControl = "ButtonControl",
 					LINKID_DataType = "Number",

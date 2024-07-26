@@ -12,17 +12,30 @@ selectedSavers = comp:GetToolList(true, 'Saver')
 function place_loader(name, tool)
     local flow = comp.CurrentFrame.FlowView
     x, y = flow:GetPos(tool)
-    -- local loader = comp:Loader({ Clip = name })
-    local loader = comp:AddTool("Loader")
+
+    -- Unselect all tools
+    flow:Select(nil, false)
+
+    -- Load and paste the LoaderPrism macro
+    local loaderLoc = comp:MapPath('Macros:/LoaderPrism.setting')
+    local loaderText = bmd.readfile(loaderLoc)
+    comp:Paste(loaderText)
+
+    -- Get the added LoaderPrism tool
+    local loader = comp.ActiveTool
+
+    -- Set the Clip property
     loader.Clip = name
-    flow:SetPos(loader, x, y+1)
+    flow:SetPos(loader, x, y + 1)
+
     inputs = tool.Output:GetConnectedInputs()
     for i, input in ipairs(inputs) do
         input:ConnectTo(loader.Output)
     end
+
     if not bmd.fileexists(name) then
-        print("file is not found ", name)
-        parseFile = bmd.parseFilename(name)
+        print("File not found:", name)
+        local parseFile = bmd.parseFilename(name)
     end
 end
 

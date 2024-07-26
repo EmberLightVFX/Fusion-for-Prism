@@ -70,21 +70,21 @@ class Prism_Fusion_Integration(object):
                 )
 
             #   Files to be used in Integration
-        self.prismFuPrismDirFiles = ["1 Save Version.py",
-                                    "2 Save Comment.py",
-                                    "3 Update selected load nodes.py",
-                                    "4 Project Browser.py",
-                                    "5 Settings.py",
-                                    "open in explorer.py",
-                                    "refresh location.py",
-                                    "refresh writer.py",
-                                    # "sceneOpen.py",       #   commented out - don't think it does anything and has a memory leak it seems
+        self.prismFuPrismDirFiles = ["SaveVersion.py",
+                                    "SaveComment.py",
+                                    "UpdateLoadNodes.py",
+                                    "OpenProjectBrowser.py",
+                                    "OpenSettings.py",
+                                    "OpenInExplorer.py",
+                                    "RefreshLocation.py",
+                                    "RefreshWriter.py",
+                                    # "SceneOpen.py",       #   commented out - don't think it does anything and has a memory leak it seems
                                     "LoaderFromSaver.lua",
                                     "LoaderFromSaverMstr.lua",
-                                    "pre-render check.py",
-                                    "refresh mediaID.py",
+                                    "Pre-RenderCheck.py",
+                                    "RefreshMediaID.py",
                                     "ReloadLoaders.py",
-                                    "update master.py"]
+                                    "UpdateMaster.py"]
         
         self.prismFuConfigDirFiles = ["PrismEvents.fu",
                                     "PrismMenu.fu"]
