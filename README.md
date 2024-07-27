@@ -37,13 +37,12 @@ Things working:
   * Error cehcking of tool
 * LoaderPrism (custom Loader) working
   * Add image from ProjectBrowser working
-
+* Thumbnail capture on Save Version
+* WritePrism tool creates versionInfo file with comments
 
 Things ToDo (as of now, more to come I am sure):
 
 - Add separate passes from ProjectBrowser not yet done.
-- Thumbnail capture on save
-- Comments from WritePrism to be added to media comments
   
 
 More details found on the Project tab above.
