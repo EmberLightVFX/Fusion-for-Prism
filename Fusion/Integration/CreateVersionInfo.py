@@ -82,12 +82,14 @@ if curPrj is not None and curPrj != "":
 	tool = comp.ActiveTool
 
 	try:
+		#	Gets filepath from tool's clip
 		versionPath = tool.GetAttrs()["TOOLST_Clip_Name"][1]
-		
+		#	Gets path for versionInfo
 		infoPath = pcore.mediaProducts.getMediaVersionInfoPathFromFilepath(versionPath, mediaType="2drenders")
 		curfile = pcore.getCurrentFileName()
+		#	Generates details
 		details = pcore.getScenefileData(curfile, getEntityFromPath=True)
-
+		#	Modifies details
 		details["identifier"] = tool.GetInput("PrismMediaIDControl")
 		details["comment"] = tool.GetInput("PrismCommentControl")
 		details["mediaType"] = "2drenders"

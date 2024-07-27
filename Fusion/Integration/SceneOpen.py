@@ -79,4 +79,10 @@ else:
 
 pcore.sceneOpen()
 
+# Set timeout for SceneOpen script
+timer = QTimer()
+timer.setSingleShot(True)
+timer.timeout.connect(qapp.quit)
+timer.start(60000)  # Timeout after 60 seconds
+
 qapp.exec_()

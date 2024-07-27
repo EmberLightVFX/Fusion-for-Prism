@@ -96,7 +96,7 @@ class Prism_Fusion_Integration(object):
                                     "OpenInExplorer.py",
                                     "RefreshLocation.py",
                                     "RefreshWriter.py",
-                                    # "SceneOpen.py",       #   commented out - needed for scene open checks - but has memory leak
+                                    "SceneOpen.py",
                                     "LoaderFromSaver.lua",
                                     "LoaderFromSaverMstr.lua",
                                     "Pre-RenderCheck.py",
@@ -140,7 +140,8 @@ class Prism_Fusion_Integration(object):
             )
             addedFiles = []
 
-            # "PrismMenu.fu" add a Prism menu, but leads to freezes
+            # "PrismMenu.fu" add a Prism menu, but leads to freezes - orig comment
+            #       -- update - seems to work great in Fusion 18+
             for i in self.prismFuConfigDirFiles:
                 origFile = os.path.join(integrationBase, i)
                 targetFile = os.path.join(installPath, "Config", i)

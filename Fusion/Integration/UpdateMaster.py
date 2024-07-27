@@ -86,21 +86,25 @@ if curPrj is not None and curPrj != "":
         pcore.popup("Please choose a Media Identifier.", title="Media Identifier")
     
     try:
+        #   Get directory from image path of Saver
         versionPath = os.path.dirname(tool.GetAttrs()["TOOLST_Clip_Name"][1])
         if not os.path.exists(versionPath):
             versionPath = os.path.dirname(versionPath)
     except:
         versionPath = ""
     
+    #   Get version number from dir name
     versionNumber = os.path.basename(versionPath)
     
     if os.path.exists(versionPath):
+        #   Get details and add more
         curfile = pcore.getCurrentFileName()
         context = pcore.getScenefileData(curfile, getEntityFromPath=True)
         context["identifier"] = tool.GetInput("PrismMediaIDControl")
         context["path"] = versionPath
 
         try:
+            #   Trigger Update Master in Prism
             result = pcore.mediaProducts.updateMasterVersion(
                                                             path=versionPath,
                                                             context=context,

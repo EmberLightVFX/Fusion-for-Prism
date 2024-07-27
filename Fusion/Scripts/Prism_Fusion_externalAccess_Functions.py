@@ -124,7 +124,6 @@ class Prism_Fusion_externalAccess_Functions(object):
 
     @err_catcher(name=__name__)
     def getIconPathForFileType(self, extension):
-
         if extension == ".autocomp":
             icon = os.path.join(self.pluginDirectory, "UserInterfaces", "Fusion-Autosave.ico")
             return icon

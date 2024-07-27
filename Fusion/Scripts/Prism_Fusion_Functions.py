@@ -108,7 +108,7 @@ class Prism_Fusion_Functions(object):
 
         return False
     
-
+    #   Adds custom icon for Fusion auto-backup files
     @err_catcher(name=__name__)
     def getIconPathForFileType(self, extension):
         if extension == ".autocomp":
@@ -228,7 +228,7 @@ class Prism_Fusion_Functions(object):
             comp.SetAttrs({'COMPN_RenderStart' : origStartFrame})
             comp.SetAttrs({'COMPN_RenderEnd' : origEndFrame})
 
-
+        #   Deals with the frame number suffix added by Fusion rener
         pattern = os.path.join(tempDir, thumbName + "*.jpg")
         renderedThumbs = glob.glob(pattern)
 
@@ -260,7 +260,7 @@ class Prism_Fusion_Functions(object):
         return pm
 
 
-    # Handle Savers in flow for thumb capture
+    # Handle Savers pass-through state for thumb capture
     @err_catcher(name=__name__)
     def origSaverStates(self, mode, comp, origSaverList):
         for tool in comp.GetToolList(False).values():
@@ -301,6 +301,7 @@ class Prism_Fusion_Functions(object):
         return self.getLastTool(comp) or None
 
 
+    #   Checks if tool is a Saver, or custom Saver type
     @err_catcher(name=__name__)
     def isSaver(self, tool):
         # Check if tool is valid
@@ -313,9 +314,9 @@ class Prism_Fusion_Functions(object):
         return False
 
 
+    # Checks if tool is set to pass-through mode
     @err_catcher(name=__name__)
     def isPassThrough(self, tool):
-        # Checks if tool is set to pass-through mode
         return tool and tool.GetAttrs({"TOOLS_Name"})["TOOLB_PassThrough"]
 
 
@@ -328,6 +329,7 @@ class Prism_Fusion_Functions(object):
                     return tool
         except:
             return None
+
 
     #   Finds if tool has any outputs connected
     @err_catcher(name=__name__)
@@ -347,7 +349,6 @@ class Prism_Fusion_Functions(object):
                     return False
 
         return False
-
 
 
     @err_catcher(name=__name__)
@@ -415,57 +416,57 @@ class Prism_Fusion_Functions(object):
         )
 
 
-    @err_catcher(name=__name__)
-    def updateReadNodes(self):
-        updatedNodes = []
+###     NOT IMPLEMENTED - FUNCTIONS ADDED TO LoaderPrism TOOL   ###
+###     VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV   ###
+    # @err_catcher(name=__name__)
+    # def updateReadNodes(self):
+    #     updatedNodes = []
 
-        selNodes = self.fusion.GetCurrentComp().GetToolList(True, "Loader")
-        if len(selNodes) == 0:
-            selNodes = self.fusion.GetCurrentComp().GetToolList(False, "Loader")
+    #     selNodes = self.fusion.GetCurrentComp().GetToolList(True, "Loader")
+    #     if len(selNodes) == 0:
+    #         selNodes = self.fusion.GetCurrentComp().GetToolList(False, "Loader")
 
-        if len(selNodes):
-            comp = self.fusion.GetCurrentComp()
-            comp.StartUndo("Updating loaders")
-            for k in selNodes:
-                i = selNodes[k]
-                curPath = comp.MapPath(i.GetAttrs()["TOOLST_Clip_Name"][1])
+    #     if len(selNodes):
+    #         comp = self.fusion.GetCurrentComp()
+    #         comp.StartUndo("Updating loaders")
+    #         for k in selNodes:
+    #             i = selNodes[k]
+    #             curPath = comp.MapPath(i.GetAttrs()["TOOLST_Clip_Name"][1])
 
-                self.core.popup(f"curPath:  {curPath}")                                      #    TESTING
+    #             # newPath = self.core.getLatestCompositingVersion(curPath)
+    #             newPath = self.core.getHighestVersion(curPath)
 
-                # newPath = self.core.getLatestCompositingVersion(curPath)
-                newPath = self.core.getHighestVersion(curPath)
+    #             if os.path.exists(os.path.dirname(newPath)) and not curPath.startswith(
+    #                 os.path.dirname(newPath)
+    #             ):
+    #                 firstFrame = i.GetInput("GlobalIn")
+    #                 lastFrame = i.GetInput("GlobalOut")
 
-                self.core.popup(f"newPath: {newPath}")                                      #    TESTING
+    #                 i.Clip = newPath
 
-                if os.path.exists(os.path.dirname(newPath)) and not curPath.startswith(
-                    os.path.dirname(newPath)
-                ):
-                    firstFrame = i.GetInput("GlobalIn")
-                    lastFrame = i.GetInput("GlobalOut")
+    #                 i.GlobalOut = lastFrame
+    #                 i.GlobalIn = firstFrame
+    #                 i.ClipTimeStart = 0
+    #                 i.ClipTimeEnd = lastFrame - firstFrame
+    #                 i.HoldLastFrame = 0
 
-                    i.Clip = newPath
+    #                 updatedNodes.append(i)
+    #         comp.EndUndo(True)
 
-                    i.GlobalOut = lastFrame
-                    i.GlobalIn = firstFrame
-                    i.ClipTimeStart = 0
-                    i.ClipTimeEnd = lastFrame - firstFrame
-                    i.HoldLastFrame = 0
+    #     if len(updatedNodes) == 0:
+    #         QMessageBox.information(
+    #             self.core.messageParent, "Information", "No nodes were updated"
+    #         )
+    #     else:
+    #         mStr = "%s nodes were updated:\n\n" % len(updatedNodes)
+    #         for i in updatedNodes:
+    #             mStr += i.GetAttrs()["TOOLS_Name"] + "\n"
 
-                    updatedNodes.append(i)
-            comp.EndUndo(True)
+    #         QMessageBox.information(
+    #             self.core.messageParent, "Information", mStr)
 
-        if len(updatedNodes) == 0:
-            QMessageBox.information(
-                self.core.messageParent, "Information", "No nodes were updated"
-            )
-        else:
-            mStr = "%s nodes were updated:\n\n" % len(updatedNodes)
-            for i in updatedNodes:
-                mStr += i.GetAttrs()["TOOLS_Name"] + "\n"
+### ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ###         
 
-            QMessageBox.information(
-                self.core.messageParent, "Information", mStr)
-            
 
     @err_catcher(name=__name__)
     def getAppVersion(self, origin):
@@ -505,41 +506,44 @@ class Prism_Fusion_Functions(object):
         btn.setPalette(origin.oldPalette)
 
 
+    #   Imports imags from Prism ProjectBrowser Media tab
     @err_catcher(name=__name__)
     def importImages(self, filepath=None, mediaBrowser=None, parent=None):
+        #   Gets selected image from RCL
         if mediaBrowser:
             sourceData = mediaBrowser.compGetImportSource()
             if not sourceData:
                 return
 
-
+        #   Adds simple UI popup
         fString = "Please select an import option:"
-        buttons = ["Current pass", "All passes", "Cancel"]
+        buttons = ["Normal", "Separate Passes", "Cancel"]
         result = self.core.popupQuestion(fString, buttons=buttons, icon=QMessageBox.NoIcon, parent=parent)
 
-        if result == "Current pass":
+        if result == "Normal":
             self.fusionImportSource(filepath, sourceData)
-        elif result == "All passes":
+        elif result == "Separate Passes":
             self.fusionImportPasses(filepath, sourceData)
         else:
             return
         
-
+    #   Import image from ProjectBrowser
     @err_catcher(name=__name__)
     def fusionImportSource(self, filePath, sourceData):
-
         comp = self.fusion.GetCurrentComp()
         comp.Lock()
 
+        #   Get image data
         filePathTemplate = sourceData[0][0]
         firstFrame = sourceData[0][1]
         lastFrame = sourceData[0][2]
 
+        #   Frame padding integer
         framePadding = self.core.framePadding
 
         # Extract filename from the file path template
         fileNameWithPlaceholder = os.path.basename(filePathTemplate)
-        fileName = fileNameWithPlaceholder.replace('#' * framePadding, '').replace('.', '')     #   TODO - to be used with rename if poss
+        fileName = fileNameWithPlaceholder.replace('#' * framePadding, '').replace('.', '')
 
         # Replace the placeholder '####' with the padded first frame number
         paddedFirstFrame = str(firstFrame).zfill(framePadding)
@@ -547,17 +551,19 @@ class Prism_Fusion_Functions(object):
 
         comp.CurrentFrame.FlowView.Select(None, False)
 
+        #   Add custon Loader tool
         try:
             loaderLoc = comp.MapPath('Macros:/LoaderPrism.setting')
             loaderText = self.bmd.readfile(loaderLoc)
             comp.Paste(loaderText)
-
             tool = comp.ActiveTool()
 
+        #   Fallback to standard Loader tool
         except:
             print("LoaderPrism is not found.  Using normal Loader.")
             tool = comp.AddTool("Loader", -32768, -32768)
 
+        #   Config Loader with values
         tool.Clip[1] = filePath
         tool.GlobalIn[1] = firstFrame
         tool.GlobalOut[1] = lastFrame
@@ -570,34 +576,103 @@ class Prism_Fusion_Functions(object):
         comp.Unlock()
 
 
+    #   Import image and launch EXR splitter if avail
     @err_catcher(name=__name__)
-    def fusionImportPasses(self, filepath, sourceData):
+    def fusionImportPasses(self, filePath, sourceData):
+        #   Import images
+        self.fusionImportSource(filePath, sourceData)
 
-        self.core.popup("Currently unused.  Please use 'Current Pass for now.")
+        # Call the splitter script after importing the source
+        comp = self.fusion.GetCurrentComp()
+
+        #   Default script name
+        script_name = "hos_SplitEXR_Ultra.lua"
+        base_dir = comp.MapPath("Scripts:")  # Base directory to start searching
+
+        script_found = False
+
+        # Traverse the base directory and its subdirectories
+        # Script usually located in ...\Script\Comp
+        for root, dirs, files in os.walk(base_dir):
+            if script_name in files:
+                script_path = os.path.join(root, script_name)
+                script_found = True
+                try:
+                    #   If found, execute the splitter script
+                    comp.RunScript(script_path)
+                except Exception as e:
+                    self.core.popup(f"There was an error running hos_SplitEXR_Ultra:\n\n: {e}")
+                break
+
+        if not script_found:
+            self.core.popup(f"'{script_name}' is not found in:\n{base_dir}.....\n\n"
+                            f"If the pass functions are desired, please place '{script_name}'\n"
+                            "in a Fusion scripts directory.")
 
 
-        # self.fusion.GetCurrentComp().Lock()
 
-        # sourceData = origin.compGetImportPasses()
+### vvvvvvvvv STOPPED DEV TO JUST USE hos_SplitEXR_Ultra VVVVVVVV   ###
+###             hos_SplitEXR_Ultra is just very good.               ###
+             
+        # comp = self.fusion.GetCurrentComp()
+        # comp.Lock()
 
-        # for i in sourceData:
-        #     filePath = i[0]
-        #     firstFrame = i[1]
-        #     lastFrame = i[2]
+        # sourceImagePath = sourceData[0][0]
+        # firstFrame = sourceData[0][1]
+        # lastFrame = sourceData[0][2]
 
-        #     filePath = filePath.replace(
-        #         "#"*self.core.framePadding, "%04d".replace("4", str(self.core.framePadding)) % firstFrame)
+        # padding = self.core.framePadding
+        # firstFramePadded = ("0" * (padding - 1)) + str(sourceData[0][1])
 
-        #     self.fusion.GetCurrentComp().CurrentFrame.FlowView.Select()
-        #     tool = self.fusion.GetCurrentComp().AddTool("Loader", -32768, -32768)
-        #     tool.Clip = filePath
-        #     tool.GlobalOut = lastFrame
-        #     tool.GlobalIn = firstFrame
-        #     tool.ClipTimeStart = 0
-        #     tool.ClipTimeEnd = lastFrame - firstFrame
-        #     tool.HoldLastFrame = 0
+        # imagePath = sourceImagePath.replace('#' * padding, firstFramePadded)
 
-        # self.fusion.GetCurrentComp().Unlock()
+        # layerNames = self.core.media.getLayersFromFile(imagePath)
+
+        # self.core.popup(f"flayerNames: {layerNames}")                     #    TESTING
+        # print(f"flayerNames: {layerNames}")                               #    TESTING
+
+
+        # # Iterate through each layer to create a Loader node
+        # for layer in layerNames:
+        #     try:
+        #         comp.CurrentFrame.FlowView.Select(None, False)
+        #         loaderLoc = comp.MapPath('Macros:/LoaderPrism.setting')
+        #         loaderText = self.bmd.readfile(loaderLoc)
+        #         comp.Paste(loaderText)
+        #         tool = comp.ActiveTool()
+        #     except:
+        #         print("LoaderPrism is not found. Using normal Loader.")
+        #         tool = comp.AddTool("Loader", -32768, -32768)
+
+        #     tool.Clip[1] = imagePath
+        #     tool.GlobalIn[1] = firstFrame
+        #     tool.GlobalOut[1] = lastFrame
+        #     tool.ClipTimeStart[1] = firstFrame
+        #     tool.ClipTimeEnd[1] = lastFrame
+        #     tool.HoldFirstFrame[1] = 0
+        #     tool.HoldLastFrame[1] = 0
+        #     tool.SetAttrs({"TOOLS_Name": f"LoaderPrism_{layer}"})  # Set a unique name for each loader
+
+        #     # Set the channels for the loader based on the layer
+        #     # Assuming `layer` contains the name of the EXR channel (e.g., 'ALL.AO')
+
+        #     # Set the channels for the loader based on the layer
+        #     tool.Red = f"\"{layer}.Red\""
+        #     tool.Green = f"\"{layer}.Green\""
+        #     tool.Blue = f"\"{layer}.Blue\""
+        #     tool.Alpha = f"\"{layer}.Alpha\""
+
+        #     # Set the specific OpenEXR format channels
+        #     tool["Clip1.OpenEXRFormat.Channels"] = 1  # Ensure this value is correct for your setup
+        #     tool["Clip1.OpenEXRFormat.RedName"] = f"FuID('{layer}.R')"
+        #     tool["Clip1.OpenEXRFormat.GreenName"] = f"FuID('{layer}.G')"
+        #     tool["Clip1.OpenEXRFormat.BlueName"] = f"FuID('{layer}.B')"
+        #     tool["Clip1.OpenEXRFormat.AlphaName"] = f"FuID('{layer}.A')"  # If there's an alpha channel
+
+
+        # comp.Unlock()
+### ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ###
+
 
 
     @err_catcher(name=__name__)
@@ -619,9 +694,6 @@ class Prism_Fusion_Functions(object):
     @err_catcher(name=__name__)
     def shotgunPublish_startup(self, origin):
         pass
-
-
-
 
 
     @err_catcher(name=__name__)
@@ -838,14 +910,15 @@ class Prism_Fusion_Functions(object):
         self.core.saveScene(versionUp=False)
         
 
+    #   Used in the Refresh button on the LoaderPrism custom tool
     @err_catcher(name=__name__)
     def updateNodeUI(self, nodeType, node):
         if nodeType == "writePrism":
+            #   Gets render locs from project settings
             locations = self.core.paths.getRenderProductBasePaths()
             locNames = list(locations.keys())
 
             self.core.popup("Locations have been updated")
-
 
             # As copySettings and loadSettings doesn't work with python we'll have to execute them as Lua code
             luacode = ' \
