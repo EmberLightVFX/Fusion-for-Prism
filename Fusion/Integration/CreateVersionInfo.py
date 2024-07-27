@@ -1,5 +1,3 @@
--- AddLoaderPrism.lua
---[[
 # -*- coding: utf-8 -*-
 #
 ####################################################
@@ -47,43 +45,59 @@
 #                          josh@alta-arts.com
 #
 ###########################################################################
-]]
 
 
-local comp = fusion:GetCurrentComp()
-if not comp then
-    print("[Prism Error] No active composition found.")
-    return
-end
+import os
+import sys
 
-local flow = comp.CurrentFrame.FlowView
-local tool = comp.ActiveTool
-local x, y = flow:GetPos(tool)
+prismRoot = os.getenv("PRISM_ROOT")
+if not prismRoot:
+    prismRoot = PRISMROOT
 
--- Unselect all tools
-flow:Select(nil, false)
+sys.path.insert(0, os.path.join(prismRoot, "PythonLibs", "Python3"))
+sys.path.insert(0, os.path.join(prismRoot, "PythonLibs", "Python311"))
+sys.path.insert(0, os.path.join(prismRoot, "Scripts"))
 
--- Load and paste the LoaderPrism macro
-local loaderLoc = comp:MapPath('Macros:/LoaderPrism.setting')
-local loaderText = bmd.readfile(loaderLoc)
-if loaderText then
-    comp:Paste(loaderText)
+import PrismCore
 
-    -- Get the added LoaderPrism tool
-    local loader = comp.ActiveTool
+from qtpy.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
 
-    -- Set the Clip property
-    flow:SetPos(loader, x, y + 1)
+qapp = QApplication.instance()
+if qapp == None:
+    qapp = QApplication(sys.argv)
 
-    -- Connect inputs to the loader output
-    local inputs = tool.Output:GetConnectedInputs()
-    for _, input in ipairs(inputs) do
-        input:ConnectTo(loader.Output)
-    end
+#	Make PrismObject
+pcore = PrismCore.PrismCore(app="Fusion")
 
-    if not bmd.fileexists(name) then
-        print("File not found:", name)
-    end
-else
-    print("[Prism Error] LoaderPrism setting file not found.")
-end
+#	Pass Fusion Scripting objects to Fusion plugin
+pcore.appPlugin.bmd = bmd
+pcore.appPlugin.fusion = fusion
+
+curPrj = pcore.getConfig('globals', 'current project')
+
+if curPrj is not None and curPrj != "":
+	pcore.changeProject(curPrj)
+	tool = comp.ActiveTool
+
+	try:
+		versionPath = tool.GetAttrs()["TOOLST_Clip_Name"][1]
+		
+		infoPath = pcore.mediaProducts.getMediaVersionInfoPathFromFilepath(versionPath, mediaType="2drenders")
+		curfile = pcore.getCurrentFileName()
+		details = pcore.getScenefileData(curfile, getEntityFromPath=True)
+
+		details["identifier"] = tool.GetInput("PrismMediaIDControl")
+		details["comment"] = tool.GetInput("PrismCommentControl")
+		details["mediaType"] = "2drenders"
+		details["versionpaths"] = os.path.dirname(versionPath)
+		del details["version"]
+
+		pcore.saveVersionInfo(filepath=os.path.dirname(infoPath), details=details)
+
+	except:
+		print("Unable to create versionInfo file.")
+
+else:
+	pcore.popup("No project is active.\nPlease set a project in the Prism Settings or by opening the Project Browser.")

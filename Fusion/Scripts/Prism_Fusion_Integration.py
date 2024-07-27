@@ -11,24 +11,42 @@
 ####################################################
 #
 #
-# Copyright (C) 2016-2020 Richard Frangenberg
+# Copyright (C) 2016-2023 Richard Frangenberg
+# Copyright (C) 2023 Prism Software GmbH
 #
-# Licensed under GNU GPL-3.0-or-later
+# Licensed under GNU LGPL-3.0-or-later
 #
 # This file is part of Prism.
 #
 # Prism is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
+# it under the terms of the GNU Lesser General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
 # Prism is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# GNU Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
+# You should have received a copy of the GNU Lesser General Public License
 # along with Prism.  If not, see <https://www.gnu.org/licenses/>.
+###########################################################################
+#
+#                BMD Fusion Studio Plugin for Prism2
+#
+#                        Original code by:
+#                          EmberLightVFX
+#           https://github.com/EmberLightVFX/Fusion-for-Prism
+#
+#
+#                       Updated for Prism2 by:
+#                           Joshua Breckeen
+#                              Alta Arts
+#                          josh@alta-arts.com
+#
+###########################################################################
+
+
 
 import os
 import sys
@@ -69,7 +87,7 @@ class Prism_Fusion_Integration(object):
                 % userName
                 )
 
-            #   Files to be used in Integration
+        #   Files to be used in Integration
         self.prismFuPrismDirFiles = ["SaveVersion.py",
                                     "SaveComment.py",
                                     "UpdateLoadNodes.py",
@@ -78,7 +96,7 @@ class Prism_Fusion_Integration(object):
                                     "OpenInExplorer.py",
                                     "RefreshLocation.py",
                                     "RefreshWriter.py",
-                                    # "SceneOpen.py",       #   commented out - don't think it does anything and has a memory leak it seems
+                                    # "SceneOpen.py",       #   commented out - needed for scene open checks - but has memory leak
                                     "LoaderFromSaver.lua",
                                     "LoaderFromSaverMstr.lua",
                                     "Pre-RenderCheck.py",
@@ -86,7 +104,8 @@ class Prism_Fusion_Integration(object):
                                     "ReloadLoaders.py",
                                     "UpdateMaster.py",
                                     "AddLoaderPrism.lua",
-                                    "AddWritePrism.lua"]
+                                    "AddWritePrism.lua",
+                                    "CreateVersionInfo.py"]
         
         self.prismFuConfigDirFiles = ["PrismEvents.fu",
                                     "PrismMenu.fu"]

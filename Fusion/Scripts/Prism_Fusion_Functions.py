@@ -11,29 +11,46 @@
 ####################################################
 #
 #
-# Copyright (C) 2016-2020 Richard Frangenberg
+# Copyright (C) 2016-2023 Richard Frangenberg
+# Copyright (C) 2023 Prism Software GmbH
 #
-# Licensed under GNU GPL-3.0-or-later
+# Licensed under GNU LGPL-3.0-or-later
 #
 # This file is part of Prism.
 #
 # Prism is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
+# it under the terms of the GNU Lesser General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
 # Prism is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# GNU Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
+# You should have received a copy of the GNU Lesser General Public License
 # along with Prism.  If not, see <https://www.gnu.org/licenses/>.
+###########################################################################
+#
+#                BMD Fusion Studio Plugin for Prism2
+#
+#                        Original code by:
+#                          EmberLightVFX
+#           https://github.com/EmberLightVFX/Fusion-for-Prism
+#
+#
+#                       Updated for Prism2 by:
+#                           Joshua Breckeen
+#                              Alta Arts
+#                          josh@alta-arts.com
+#
+###########################################################################
 
 
 import os
 import re
-import tempfile
+import glob
+import shutil
 
 from qtpy.QtCore import *
 from qtpy.QtGui import *
@@ -57,11 +74,12 @@ class Prism_Fusion_Functions(object):
     def instantStartup(self, origin):
         qapp = QApplication.instance()
 
-        with (open(os.path.join(self.pluginDirectory,
+        ssFile = os.path.join(self.pluginDirectory,
                                 "UserInterfaces",
                                 "FusionStyleSheet",
-                                "Fusion.qss"),
-                                "r",)) as ssFile:
+                                "Fusion.qss")
+
+        with (open(ssFile, "r",)) as ssFile:
             ssheet = ssFile.read()
 
         ssheet = ssheet.replace("qss:", os.path.join(self.pluginDirectory,
@@ -93,7 +111,6 @@ class Prism_Fusion_Functions(object):
 
     @err_catcher(name=__name__)
     def getIconPathForFileType(self, extension):
-
         if extension == ".autocomp":
             icon = os.path.join(self.pluginDirectory, "UserInterfaces", "Fusion-Autosave.ico")
             return icon
@@ -150,80 +167,186 @@ class Prism_Fusion_Functions(object):
     def getSceneExtension(self, origin):
         return self.sceneFormats[0]
 
+
     @err_catcher(name=__name__)
     def saveScene(self, origin, filepath, details={}):
         try:
             return self.fusion.GetCurrentComp().Save(filepath)
         except:
             return ""
-        
 
-
-
-
-    # @err_catcher(name=__name__)
-    # def captureViewportThumbnail(self):
-
-    #     # path = tempfile.NamedTemporaryFile(suffix=".jpg").name
-
-    #     path = r"C:\\Users\\Alta Arts\\Desktop\\THUMBS\\TESTTHUMB.png"
-
-    #     self.core.popup(f"self.fusion from thumb:  {self.fusion}")                                      #    TESTING
-
-
-    #     comp = self.fusion.GetCurrentComp()
-    #     flow = comp.CurrentFrame.FlowView
-    #     # viewer = self.fusion.CurrentViewer()
-    #     # image = viewer.GetCurrentImage()
-
-    #     # Get the right viewer
-    #     right_viewer = fusion.GetViewers().get("RightView", None)
-    #     if right_viewer is None:
-    #         print("Right viewer not found.")
-    #         return
-        
-
-    #     selectedTool = comp.GetToolList(False).get("Selected", None)
-    #     self.core.popup(f"selectedTool:  {selectedTool}")                                      #    TESTING
-
-    #     lastTool = self.getLastTool(comp)
-    #     self.core.popup(f"lastTool: {lastTool}")                                      #    TESTING
-
-    #     tempSaver = comp.AddTool("WritePrism")
-
-    #     if lastTool:
-    #         tempSaver.ConnectInput(1, lastTool)
-
-    #     tempSaver.SetData("File", path)
-    #     tempSaver.SetData("Format", "PNG")
-
-    #     comp.QueueAction("Render")
-
-        # # Wait for render completion
-        # import time
-        # time.sleep(5)  # Adjust time as needed for rendering
-
-        # # Remove the temporary Saver tool
-        # current_comp.DeleteTool(tempSaver)
-
-
-        # if image:
-        #     image.Save(path)
-
-        # pm = self.core.media.getPixmapFromPath(path)
-
-        # return pm
 
     @err_catcher(name=__name__)
+    def captureViewportThumbnail(self):
+        #   Make temp dir and file
+        tempDir = os.path.join(self.pluginDirectory, "Temp")
+        if not os.path.exists(tempDir):
+            os.mkdir(tempDir)
+        thumbPath = os.path.join(tempDir, "FusionThumb.jpg")
+        thumbName = os.path.basename(thumbPath).split('.')[0]
+
+        #   Get Fusion API stuff
+        comp = self.fusion.GetCurrentComp()
+        flow = comp.CurrentFrame.FlowView
+
+        comp.Lock()
+        comp.StartUndo()
+
+        thumbSaver = None
+        origSaverList = {}
+
+        #   Get tool through logic (Selected or Saver or last)
+        thumbTool = self.findThumbnailTool(comp)
+
+        if thumbTool:
+            #   Save pass-through state of all savers
+            origSaverList = self.origSaverStates("save", comp, origSaverList)
+
+            # Add a Saver tool to the composition
+            thumbSaver = comp.AddTool("Saver", -32768, -32768, 1)
+
+            # Connect the Saver tool to the currently selected tool
+            thumbSaver.Input = thumbTool
+
+            # Set the path for the Saver tool
+            thumbSaver.Clip = os.path.join(tempDir, thumbName + ".jpg")
+
+            #   Get current frame number
+            currFrame = comp.CurrentTime
+
+            origStartFrame = comp.GetAttrs("COMPN_RenderStart")
+            origEndFrame = comp.GetAttrs("COMPN_RenderEnd")
+
+            # Temporarily set the render range to the current frame
+            comp.SetAttrs({'COMPN_RenderStart' : currFrame})
+            comp.SetAttrs({'COMPN_RenderEnd' : currFrame})
+
+            # Render the current frame
+            comp.Render()  # Trigger the render
+
+            # Restore the original render range
+            comp.SetAttrs({'COMPN_RenderStart' : origStartFrame})
+            comp.SetAttrs({'COMPN_RenderEnd' : origEndFrame})
+
+
+        pattern = os.path.join(tempDir, thumbName + "*.jpg")
+        renderedThumbs = glob.glob(pattern)
+
+        if renderedThumbs:
+            renderedThumb = renderedThumbs[0]  # Assuming only one matching file
+            os.rename(renderedThumb, thumbPath)
+
+        comp.EndUndo()
+        comp.Undo()
+
+        if thumbSaver:
+            try:
+                thumbSaver.Delete()
+            except:
+                pass
+
+        #   Restore pass-through state of orig savers
+        self.origSaverStates("load", comp, origSaverList)
+
+        comp.Unlock()
+
+        #   Get pixmap from Prism
+        pm = self.core.media.getPixmapFromPath(thumbPath)
+
+        #   Delete temp dir
+        if os.path.exists(tempDir):
+            shutil.rmtree(tempDir)
+
+        return pm
+
+
+    # Handle Savers in flow for thumb capture
+    @err_catcher(name=__name__)
+    def origSaverStates(self, mode, comp, origSaverList):
+        for tool in comp.GetToolList(False).values():
+            if self.isSaver(tool):
+                tool_name = tool.GetAttrs()["TOOLS_Name"]
+                if mode == "save":
+                    # Save the current pass-through state
+                    origSaverList[tool_name] = tool.GetAttrs()["TOOLB_PassThrough"]
+                    # Set the tool to pass-through
+                    tool.SetAttrs({"TOOLB_PassThrough": True})
+                elif mode == "load":
+                    # Restore the original pass-through state
+                    if tool_name in origSaverList:
+                        tool.SetAttrs({"TOOLB_PassThrough": origSaverList[tool_name]})
+
+        return origSaverList
+    
+
+    #   Finds the tool to use for the thumbnail in priority
+    @err_catcher(name=__name__)
+    def findThumbnailTool(self, comp):
+        # 1. Check the selected tool
+        currTool = comp.ActiveTool
+        if currTool:
+            return currTool
+
+        # 2. Check for any saver that is not pass-through
+        for tool in comp.GetToolList(False).values():
+            if self.isSaver(tool) and not self.isPassThrough(tool):
+                return tool
+
+        # 3. Check for any saver, even if pass-through
+        for tool in comp.GetToolList(False).values():
+            if self.isSaver(tool):
+                return tool
+
+        # 4. Fallback to the final tool in the flow
+        return self.getLastTool(comp) or None
+
+
+    @err_catcher(name=__name__)
+    def isSaver(self, tool):
+        # Check if tool is valid
+        if not tool:
+            return False
+        # Check if tool name is 'Saver' (should work if node is renamed)
+        if tool.GetAttrs({"TOOLS_Name"})["TOOLS_RegID"] == "Saver":
+            return True
+
+        return False
+
+
+    @err_catcher(name=__name__)
+    def isPassThrough(self, tool):
+        # Checks if tool is set to pass-through mode
+        return tool and tool.GetAttrs({"TOOLS_Name"})["TOOLB_PassThrough"]
+
+
+    #   Tries to find last tool in the flow
+    @err_catcher(name=__name__)
     def getLastTool(self, comp):
+        try:
+            for tool in comp.GetToolList(False).values():
+                if not self.hasConnectedOutputs(tool):
+                    return tool
+        except:
+            return None
 
-        toolList = comp.GetToolList()
-        lastTool = None
-        for tool in toolList.values():
-            if not tool.GetInputList():
-                lastTool = tool
+    #   Finds if tool has any outputs connected
+    @err_catcher(name=__name__)
+    def hasConnectedOutputs(self, tool):
+        if not tool:
+            return False
 
-        return lastTool
+        outputList = tool.GetOutputList()
+        for output in outputList.values():
+            if output is not None and hasattr(output, 'GetConnectedInput'):
+                # Check if the output has any connected inputs in other tools
+                try:
+                    connection = output.GetConnectedInputs()
+                    if connection != {}:
+                        return True
+                except:
+                    return False
+
+        return False
 
 
 
@@ -264,7 +387,8 @@ class Prism_Fusion_Functions(object):
 
     @err_catcher(name=__name__)
     def getFPS(self, origin):
-        return self.fusion.GetCurrentComp().GetPrefs()["Comp"]["FrameFormat"]["Rate"]
+        fps = self.fusion.GetCurrentComp().GetPrefs()["Comp"]["FrameFormat"]["Rate"]
+        return fps
     
 
     @err_catcher(name=__name__)
@@ -275,11 +399,11 @@ class Prism_Fusion_Functions(object):
     @err_catcher(name=__name__)
     def getResolution(self):
         width = self.fusion.GetCurrentComp().GetPrefs()[
-            "Comp"]["FrameFormat"]["Height"]
-        height = self.fusion.GetCurrentComp().GetPrefs()[
             "Comp"]["FrameFormat"]["Width"]
+        height = self.fusion.GetCurrentComp().GetPrefs()[
+            "Comp"]["FrameFormat"]["Height"]
         return [width, height]
-    
+
 
     @err_catcher(name=__name__)
     def setResolution(self, width=None, height=None):
