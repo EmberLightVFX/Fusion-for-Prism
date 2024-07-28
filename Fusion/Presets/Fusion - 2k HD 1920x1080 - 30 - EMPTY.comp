@@ -273,7 +273,6 @@ Composition {
 				Map = {
 				},
 			},
-			LastFile = "D:\\Dropbox\\Alta Arts\\OCIO\\PixelManager\\config.ocio",
 			FrameFormat = {
 				GuideRatio = 1.77777777777778,
 				DepthInteractive = 2,
