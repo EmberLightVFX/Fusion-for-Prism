@@ -416,58 +416,6 @@ class Prism_Fusion_Functions(object):
         )
 
 
-###     NOT IMPLEMENTED - FUNCTIONS ADDED TO LoaderPrism TOOL   ###
-###     VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV   ###
-    # @err_catcher(name=__name__)
-    # def updateReadNodes(self):
-    #     updatedNodes = []
-
-    #     selNodes = self.fusion.GetCurrentComp().GetToolList(True, "Loader")
-    #     if len(selNodes) == 0:
-    #         selNodes = self.fusion.GetCurrentComp().GetToolList(False, "Loader")
-
-    #     if len(selNodes):
-    #         comp = self.fusion.GetCurrentComp()
-    #         comp.StartUndo("Updating loaders")
-    #         for k in selNodes:
-    #             i = selNodes[k]
-    #             curPath = comp.MapPath(i.GetAttrs()["TOOLST_Clip_Name"][1])
-
-    #             # newPath = self.core.getLatestCompositingVersion(curPath)
-    #             newPath = self.core.getHighestVersion(curPath)
-
-    #             if os.path.exists(os.path.dirname(newPath)) and not curPath.startswith(
-    #                 os.path.dirname(newPath)
-    #             ):
-    #                 firstFrame = i.GetInput("GlobalIn")
-    #                 lastFrame = i.GetInput("GlobalOut")
-
-    #                 i.Clip = newPath
-
-    #                 i.GlobalOut = lastFrame
-    #                 i.GlobalIn = firstFrame
-    #                 i.ClipTimeStart = 0
-    #                 i.ClipTimeEnd = lastFrame - firstFrame
-    #                 i.HoldLastFrame = 0
-
-    #                 updatedNodes.append(i)
-    #         comp.EndUndo(True)
-
-    #     if len(updatedNodes) == 0:
-    #         QMessageBox.information(
-    #             self.core.messageParent, "Information", "No nodes were updated"
-    #         )
-    #     else:
-    #         mStr = "%s nodes were updated:\n\n" % len(updatedNodes)
-    #         for i in updatedNodes:
-    #             mStr += i.GetAttrs()["TOOLS_Name"] + "\n"
-
-    #         QMessageBox.information(
-    #             self.core.messageParent, "Information", mStr)
-
-### ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ###         
-
-
     @err_catcher(name=__name__)
     def getAppVersion(self, origin):
         return self.fusion.Version
@@ -579,100 +527,60 @@ class Prism_Fusion_Functions(object):
     #   Import image and launch EXR splitter if avail
     @err_catcher(name=__name__)
     def fusionImportPasses(self, filePath, sourceData):
-        #   Import images
+        # Import images
         self.fusionImportSource(filePath, sourceData)
 
         # Call the splitter script after importing the source
         comp = self.fusion.GetCurrentComp()
 
-        #   Default script name
-        script_name = "hos_SplitEXR_Ultra.lua"
-        base_dir = comp.MapPath("Scripts:")  # Base directory to start searching
-
+        # Default script name
+        scriptName = "hos_SplitEXR_Ultra.lua"
         script_found = False
 
-        # Traverse the base directory and its subdirectories
-        # Script usually located in ...\Script\Comp
-        for root, dirs, files in os.walk(base_dir):
-            if script_name in files:
-                script_path = os.path.join(root, script_name)
-                script_found = True
-                try:
-                    #   If found, execute the splitter script
-                    comp.RunScript(script_path)
-                except Exception as e:
-                    self.core.popup(f"There was an error running hos_SplitEXR_Ultra:\n\n: {e}")
+        # Traverse the various dirs and attempt to find the script
+        for scriptDir in self.getScriptDirList():
+            for root, dirs, files in os.walk(scriptDir):
+                if scriptName in files:
+                    scriptPath = os.path.join(root, scriptName)
+                    script_found = True
+                    try:
+                        # If found, execute the splitter script
+                        comp.RunScript(scriptPath)
+                    except Exception as e:
+                        self.core.popup(f"There was an error running hos_SplitEXR_Ultra:\n\n: {e}")
+                    break
+            if script_found:
                 break
 
         if not script_found:
-            self.core.popup(f"'{script_name}' is not found in:\n{base_dir}.....\n\n"
-                            f"If the pass functions are desired, please place '{script_name}'\n"
+            self.core.popup(f"'{scriptName}' is not found.....\n\n"
+                            f"If the pass functions are desired, please place '{scriptName}'\n"
                             "in a Fusion scripts directory.")
 
 
+    #   Gets the various script paths from the Fusion preferences Path Maps
+    @err_catcher(name=__name__)
+    def getScriptDirList(self):
 
-### vvvvvvvvv STOPPED DEV TO JUST USE hos_SplitEXR_Ultra VVVVVVVV   ###
-###             hos_SplitEXR_Ultra is just very good.               ###
-             
-        # comp = self.fusion.GetCurrentComp()
-        # comp.Lock()
+        scriptDirList = []
 
-        # sourceImagePath = sourceData[0][0]
-        # firstFrame = sourceData[0][1]
-        # lastFrame = sourceData[0][2]
+        # Keys for the path mappings to retrieve
+        pathKeys = [
+            "Global.Paths.Map.Scripts:",
+            "Global.Paths.Map.UserPaths:",
+            "Global.Paths.Map.Reactor:"
+            ]
 
-        # padding = self.core.framePadding
-        # firstFramePadded = ("0" * (padding - 1)) + str(sourceData[0][1])
+        # Iterate over each path key and retrieve the directories
+        for key in pathKeys:
+            raw_paths = self.fusion.GetPrefs(key)
+            if raw_paths:
+                aliases = raw_paths.split(';')
+                for alias in aliases:
+                    resolved_path = self.fusion.MapPath(alias)
+                    scriptDirList.append(resolved_path)
 
-        # imagePath = sourceImagePath.replace('#' * padding, firstFramePadded)
-
-        # layerNames = self.core.media.getLayersFromFile(imagePath)
-
-        # self.core.popup(f"flayerNames: {layerNames}")                     #    TESTING
-        # print(f"flayerNames: {layerNames}")                               #    TESTING
-
-
-        # # Iterate through each layer to create a Loader node
-        # for layer in layerNames:
-        #     try:
-        #         comp.CurrentFrame.FlowView.Select(None, False)
-        #         loaderLoc = comp.MapPath('Macros:/LoaderPrism.setting')
-        #         loaderText = self.bmd.readfile(loaderLoc)
-        #         comp.Paste(loaderText)
-        #         tool = comp.ActiveTool()
-        #     except:
-        #         print("LoaderPrism is not found. Using normal Loader.")
-        #         tool = comp.AddTool("Loader", -32768, -32768)
-
-        #     tool.Clip[1] = imagePath
-        #     tool.GlobalIn[1] = firstFrame
-        #     tool.GlobalOut[1] = lastFrame
-        #     tool.ClipTimeStart[1] = firstFrame
-        #     tool.ClipTimeEnd[1] = lastFrame
-        #     tool.HoldFirstFrame[1] = 0
-        #     tool.HoldLastFrame[1] = 0
-        #     tool.SetAttrs({"TOOLS_Name": f"LoaderPrism_{layer}"})  # Set a unique name for each loader
-
-        #     # Set the channels for the loader based on the layer
-        #     # Assuming `layer` contains the name of the EXR channel (e.g., 'ALL.AO')
-
-        #     # Set the channels for the loader based on the layer
-        #     tool.Red = f"\"{layer}.Red\""
-        #     tool.Green = f"\"{layer}.Green\""
-        #     tool.Blue = f"\"{layer}.Blue\""
-        #     tool.Alpha = f"\"{layer}.Alpha\""
-
-        #     # Set the specific OpenEXR format channels
-        #     tool["Clip1.OpenEXRFormat.Channels"] = 1  # Ensure this value is correct for your setup
-        #     tool["Clip1.OpenEXRFormat.RedName"] = f"FuID('{layer}.R')"
-        #     tool["Clip1.OpenEXRFormat.GreenName"] = f"FuID('{layer}.G')"
-        #     tool["Clip1.OpenEXRFormat.BlueName"] = f"FuID('{layer}.B')"
-        #     tool["Clip1.OpenEXRFormat.AlphaName"] = f"FuID('{layer}.A')"  # If there's an alpha channel
-
-
-        # comp.Unlock()
-### ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ###
-
+        return scriptDirList
 
 
     @err_catcher(name=__name__)
