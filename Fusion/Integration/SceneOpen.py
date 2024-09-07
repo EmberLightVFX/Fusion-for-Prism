@@ -11,24 +11,40 @@
 ####################################################
 #
 #
-# Copyright (C) 2016-2020 Richard Frangenberg
+# Copyright (C) 2016-2023 Richard Frangenberg
+# Copyright (C) 2023 Prism Software GmbH
 #
-# Licensed under GNU GPL-3.0-or-later
+# Licensed under GNU LGPL-3.0-or-later
 #
 # This file is part of Prism.
 #
 # Prism is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
+# it under the terms of the GNU Lesser General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
 # Prism is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# GNU Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
+# You should have received a copy of the GNU Lesser General Public License
 # along with Prism.  If not, see <https://www.gnu.org/licenses/>.
+###########################################################################
+#
+#                BMD Fusion Studio Plugin for Prism2
+#
+#                        Original code by:
+#                          EmberLightVFX
+#           https://github.com/EmberLightVFX/Fusion-for-Prism
+#
+#
+#                       Updated for Prism2 by:
+#                           Joshua Breckeen
+#                              Alta Arts
+#                          josh@alta-arts.com
+#
+###########################################################################
 
 
 import os
@@ -55,14 +71,18 @@ if qapp == None:
 pcore = PrismCore.PrismCore(app="Fusion")
 pcore.appPlugin.fusion = fusion
 
-curPrj = pcore.getConfig('globals', 'current project')
+curPrj = pcore.getConfig("globals", "current project")
 if curPrj is not None and curPrj != "":
-    pcore.changeProject(curPrj)
-    comp = fusion.GetCurrentComp()
-    wpNodes = comp.GetToolList(False, "Saver")
-    for i in wpNodes:
-        if not hasattr(wpNodes[i], "PrismTaskControl") or wpNodes[i].PrismTaskControl is None:
-            continue
-        pcore.appPlugin.startRender(wpNodes[i])
+	pcore.changeProject(curPrj, openUi="") # projectBrowser
 else:
-    QMessageBox.warning(pcore.messageParent, "Prism warning", "No project is active.\nPlease set a project in the Prism Settings or by opening the Project Browser.")
+	pcore.projects.setProject(openUi="projectBrowser")
+
+pcore.sceneOpen()
+
+# Set timeout for SceneOpen script
+timer = QTimer()
+timer.setSingleShot(True)
+timer.timeout.connect(qapp.quit)
+timer.start(60000)  # Timeout after 60 seconds
+
+qapp.exec_()

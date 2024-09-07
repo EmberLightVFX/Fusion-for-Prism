@@ -1,10 +1,66 @@
--- Description: 
---         Create a Loader from selected Saver node. Works with multiple selected selectedSavers.
--- License: MIT
--- Author: Alex Bogomolov
--- email: mail@abogomolov.com
--- Donate: paypal.me/aabogomolov
--- Version: 1.1, 2020/9/1
+--[[
+# -*- coding: utf-8 -*-
+#
+####################################################
+#
+# PRISM - Pipeline for animation and VFX projects
+#
+# www.prism-pipeline.com
+#
+# contact: contact@prism-pipeline.com
+#
+####################################################
+#
+#
+# Copyright (C) 2016-2023 Richard Frangenberg
+# Copyright (C) 2023 Prism Software GmbH
+#
+# Licensed under GNU LGPL-3.0-or-later
+#
+# This file is part of Prism.
+#
+# Prism is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Prism is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with Prism.  If not, see <https://www.gnu.org/licenses/>.
+###########################################################################
+#
+#                BMD Fusion Studio Plugin for Prism2
+#
+#                        Original code by:
+#                          EmberLightVFX
+#           https://github.com/EmberLightVFX/Fusion-for-Prism
+#
+#
+#                       Updated for Prism2 by:
+#                           Joshua Breckeen
+#                              Alta Arts
+#                          josh@alta-arts.com
+#
+###########################################################################
+#
+#   Original Script by:
+#
+#       Description: 
+#           Create a Loader from selected Saver node. Works with multiple selected selectedSavers.
+#       License: MIT
+#       Author: Alex Bogomolov
+#       email: mail@abogomolov.com
+#       Donate: paypal.me/aabogomolov
+#       Version: 1.1, 2020/9/1
+#
+#       Modified for use in Prism2
+#
+###########################################################################
+]]
 
 comp = fu:GetCurrentComp()
 selectedSavers = comp:GetToolList(true, 'Saver')
@@ -12,17 +68,30 @@ selectedSavers = comp:GetToolList(true, 'Saver')
 function place_loader(name, tool)
     local flow = comp.CurrentFrame.FlowView
     x, y = flow:GetPos(tool)
-    -- local loader = comp:Loader({ Clip = name })
-    local loader = comp:AddTool("Loader")
+
+    -- Unselect all tools
+    flow:Select(nil, false)
+
+    -- Load and paste the LoaderPrism macro
+    local loaderLoc = comp:MapPath('Macros:/LoaderPrism.setting')
+    local loaderText = bmd.readfile(loaderLoc)
+    comp:Paste(loaderText)
+
+    -- Get the added LoaderPrism tool
+    local loader = comp.ActiveTool
+
+    -- Set the Clip property
     loader.Clip = name
-    flow:SetPos(loader, x, y+1)
+    flow:SetPos(loader, x, y + 1)
+
     inputs = tool.Output:GetConnectedInputs()
     for i, input in ipairs(inputs) do
         input:ConnectTo(loader.Output)
     end
+
     if not bmd.fileexists(name) then
-        print("file is not found ", name)
-        parseFile = bmd.parseFilename(name)
+        print("File not found:", name)
+        local parseFile = bmd.parseFilename(name)
     end
 end
 

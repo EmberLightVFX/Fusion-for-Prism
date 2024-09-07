@@ -1,3 +1,5 @@
+-- AddLoaderPrism.lua
+--[[
 # -*- coding: utf-8 -*-
 #
 ####################################################
@@ -45,17 +47,43 @@
 #                          josh@alta-arts.com
 #
 ###########################################################################
+]]
 
-import os
 
+local comp = fusion:GetCurrentComp()
+if not comp then
+    print("[Prism Error] No active composition found.")
+    return
+end
 
-def load_stylesheet():
-    sFile = os.path.dirname(__file__) + "/Fusion.qss"
-    if not os.path.exists(sFile):
-        return ""
+local flow = comp.CurrentFrame.FlowView
+local tool = comp.ActiveTool
+local x, y = flow:GetPos(tool)
 
-    with open(sFile, "r") as f:
-        stylesheet = f.read()
+-- Unselect all tools
+flow:Select(nil, false)
 
-    stylesheet = stylesheet.replace("qss:", os.path.dirname(__file__).replace("\\", "/") + "/")
-    return stylesheet
+-- Load and paste the LoaderPrism macro
+local loaderLoc = comp:MapPath('Macros:/LoaderPrism.setting')
+local loaderText = bmd.readfile(loaderLoc)
+if loaderText then
+    comp:Paste(loaderText)
+
+    -- Get the added LoaderPrism tool
+    local loader = comp.ActiveTool
+
+    -- Set the Clip property
+    flow:SetPos(loader, x, y + 1)
+
+    -- Connect inputs to the loader output
+    local inputs = tool.Output:GetConnectedInputs()
+    for _, input in ipairs(inputs) do
+        input:ConnectTo(loader.Output)
+    end
+
+    if not bmd.fileexists(name) then
+        print("File not found:", name)
+    end
+else
+    print("[Prism Error] LoaderPrism setting file not found.")
+end

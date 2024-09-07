@@ -11,24 +11,42 @@
 ####################################################
 #
 #
-# Copyright (C) 2016-2020 Richard Frangenberg
+# Copyright (C) 2016-2023 Richard Frangenberg
+# Copyright (C) 2023 Prism Software GmbH
 #
-# Licensed under GNU GPL-3.0-or-later
+# Licensed under GNU LGPL-3.0-or-later
 #
 # This file is part of Prism.
 #
 # Prism is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
+# it under the terms of the GNU Lesser General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
 # Prism is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# GNU Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
+# You should have received a copy of the GNU Lesser General Public License
 # along with Prism.  If not, see <https://www.gnu.org/licenses/>.
+###########################################################################
+#
+#                BMD Fusion Studio Plugin for Prism2
+#
+#                        Original code by:
+#                          EmberLightVFX
+#           https://github.com/EmberLightVFX/Fusion-for-Prism
+#
+#
+#                       Updated for Prism2 by:
+#                           Joshua Breckeen
+#                              Alta Arts
+#                          josh@alta-arts.com
+#
+###########################################################################
+
+
 
 import os
 import sys
@@ -69,20 +87,25 @@ class Prism_Fusion_Integration(object):
                 % userName
                 )
 
-            #   Files to be used in Integration
-        self.prismFuPrismDirFiles = ["1 Save Version.py",
-                                    "2 Save Comment.py",
-                                    "3 Update selected load nodes.py",
-                                    "4 Project Browser.py",
-                                    "5 Settings.py",
-                                    "open in explorer.py",
-                                    "refresh location.py",
-                                    "refresh writer.py",
-                                    # "sceneOpen.py",       #   commented out - don't think it does anything and has a memory leak it seems
+        #   Files to be used in Integration
+        self.prismFuPrismDirFiles = ["SaveVersion.py",
+                                    "SaveComment.py",
+                                    "UpdateLoadNodes.py",
+                                    "OpenProjectBrowser.py",
+                                    "OpenSettings.py",
+                                    "OpenInExplorer.py",
+                                    "RefreshLocation.py",
+                                    "RefreshWriter.py",
+                                    "SceneOpen.py",
                                     "LoaderFromSaver.lua",
-                                    "pre-render check.py",
-                                    "refresh mediaID.py",
-                                    "ReloadLoaders.py"]
+                                    "LoaderFromSaverMstr.lua",
+                                    "Pre-RenderCheck.py",
+                                    "RefreshMediaID.py",
+                                    "ReloadLoaders.py",
+                                    "UpdateMaster.py",
+                                    "AddLoaderPrism.lua",
+                                    "AddWritePrism.lua",
+                                    "CreateVersionInfo.py"]
         
         self.prismFuConfigDirFiles = ["PrismEvents.fu",
                                     "PrismMenu.fu"]
@@ -117,7 +140,8 @@ class Prism_Fusion_Integration(object):
             )
             addedFiles = []
 
-            # "PrismMenu.fu" add a Prism menu, but leads to freezes
+            # "PrismMenu.fu" add a Prism menu, but leads to freezes - orig comment
+            #       -- update - seems to work great in Fusion 18+
             for i in self.prismFuConfigDirFiles:
                 origFile = os.path.join(integrationBase, i)
                 targetFile = os.path.join(installPath, "Config", i)
